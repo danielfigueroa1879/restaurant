@@ -14,7 +14,8 @@ const ADMIN_EMAIL = 'dueña@mi-restaurante.cl';
 // A partir de aquí no necesitas cambiar nada.
 // ============================================================
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+const { createClient: _createSupabase } = window.supabase;
+const db = _createSupabase(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: { persistSession: true, autoRefreshToken: true }
 });
 
@@ -50,7 +51,7 @@ function menuToDb(m) {
 }
 
 async function fetchMenu() {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('menu_config')
     .select('*')
     .eq('id', 1)
@@ -60,7 +61,7 @@ async function fetchMenu() {
 }
 
 async function saveMenu(menu) {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('menu_config')
     .update(menuToDb(menu))
     .eq('id', 1)
@@ -71,7 +72,7 @@ async function saveMenu(menu) {
 }
 
 function subscribeToMenu(callback) {
-  return supabase
+  return db
     .channel('menu-realtime')
     .on(
       'postgres_changes',
@@ -79,4 +80,14 @@ function subscribeToMenu(callback) {
       (payload) => callback(dbToMenu(payload.new))
     )
     .subscribe();
+}
+
+async function signInAdmin(password) {
+  const { error } = await db.auth.signInWithPassword({ email: ADMIN_EMAIL, password });
+  return error;
+}
+
+async function getAdminSession() {
+  const { data: { session } } = await db.auth.getSession();
+  return session;
 }

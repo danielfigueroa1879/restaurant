@@ -104,7 +104,7 @@ async function login() {
   msg.className = 'msg';
   if (!password) { msg.className = 'msg err'; msg.textContent = 'Introduce la contraseña.'; return; }
 
-  const { error } = await supabase.auth.signInWithPassword({ email: ADMIN_EMAIL, password });
+  const error = await signInAdmin(password);
   if (error) {
     msg.className = 'msg err';
     msg.textContent = 'Contraseña incorrecta o error al conectar con Supabase.';
@@ -211,6 +211,6 @@ document.getElementById('newAdicionalNombre').addEventListener('keydown', e => {
 
 // ---------- session restore ----------
 (async () => {
-  const { data: { session } } = await supabase.auth.getSession();
+  const session = await getAdminSession();
   if (session) await enterEditor();
 })();
