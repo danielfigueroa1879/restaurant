@@ -3,7 +3,7 @@
 // de tu proyecto (los encuentras en Supabase → Project Settings → API).
 // ============================================================
 
-const SUPABASE_URL = 'https://vqlmjqmagflbwbbojfqh.supabase.co/rest/v1/';
+const SUPABASE_URL = 'https://vqlmjqmagflbwbbojfqh.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_e-ZJkCMmkZT7J63x7BULuw_JEU7ziUs';
 
 // Email del usuario administrador (el que creaste en Supabase → Authentication → Users).
