@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administración del menú</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Panel del menú</h1>
+      <div class="subtitle">Uso exclusivo de la dueña</div>
+    </header>
+
+    <div id="loginCard" class="card login">
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="password" placeholder="Introduce tu contraseña" />
+      </div>
+      <button class="btn-save" onclick="login()">Entrar</button>
+      <div id="loginMsg" class="msg"></div>
+    </div>
+
+    <div id="editor" class="hidden">
+      <div class="card">
+        <h2>Tema de la página</h2>
+        <div class="hint">Colores y fondo que verán los clientes al escanear la tarjeta NFC.</div>
+        <div class="themes" id="themesGrid"></div>
+      </div>
+
+      <div class="card">
+        <h2>Restaurante</h2>
+        <div class="field">
+          <label>Nombre</label>
+          <input type="text" id="restaurantName" placeholder="Ej. Restaurante Trabajo" />
+        </div>
+        <div class="field">
+          <label>Fecha visible (opcional)</label>
+          <input type="text" id="date" placeholder="Se muestra la de hoy si lo dejas vacío" />
+        </div>
+        <div class="field">
+          <label>WhatsApp para pedidos</label>
+          <input type="text" id="whatsappNumber" placeholder="Ej. 56912345678" inputmode="numeric" />
+          <div class="price-note">Número con código de país y sin +. Ej. Chile: 56912345678. Los clientes verán un botón para enviarte el pedido por WhatsApp.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Menú del día</h2>
+        <div class="hint">Agrega todas las opciones que se ofrecen hoy. Los clientes eligen una.</div>
+
+        <div class="field">
+          <label>Precio del menú (pesos)</label>
+          <input type="text" id="menuPrice" placeholder="5000" />
+          <div class="price-note">Precio fijo del menú del día. Aplica a todas las opciones de abajo.</div>
+        </div>
+
+        <label>Opciones de plato</label>
+        <div class="row">
+          <input type="text" id="newMenu" placeholder="Ej. Chuleta, Bistec, Pechuga..." />
+          <button class="btn-add" onclick="addMenu()">Agregar</button>
+        </div>
+        <ul class="items" id="menuList"></ul>
+
+        <label style="margin-top: 18px;">Agregados incluidos</label>
+        <div class="hint" style="margin-bottom: 8px;">Ej. Arroz, Ensalada, Papas fritas. Van con todos los menús.</div>
+        <div class="row">
+          <input type="text" id="newAgregado" placeholder="Ej. Arroz" />
+          <button class="btn-add" onclick="addAgregado()">Agregar</button>
+        </div>
+        <ul class="items" id="agregadoList"></ul>
+
+        <div class="field" style="margin-top: 18px;">
+          <label>Notas del menú (opcional)</label>
+          <textarea id="notas" placeholder="Ej. Menú disponible de 12:30 a 15:30"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Adicionales a la carta</h2>
+        <div class="hint">Ej. Completos, Churrascos, Barros Luco... cada uno con su precio.</div>
+        <div class="row-2">
+          <input type="text" id="newAdicionalNombre" placeholder="Ej. Barros Luco" />
+          <input type="text" id="newAdicionalPrecio" placeholder="Precio (ej. 4500)" />
+          <button class="btn-add" onclick="addAdicional()">Agregar</button>
+        </div>
+        <ul class="items" id="adicionalList"></ul>
+      </div>
+
+      <div class="card">
+        <div id="autoStatus" class="autosave-status">
+          <span class="dot"></span>
+          <span id="autoStatusText">Autoguardado activado</span>
+        </div>
+        <a class="link" href="index.html">Ver la página pública →</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
