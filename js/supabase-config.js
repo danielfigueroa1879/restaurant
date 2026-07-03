@@ -3,12 +3,12 @@
 // de tu proyecto (los encuentras en Supabase → Project Settings → API).
 // ============================================================
 
-const SUPABASE_URL = 'https://TU-PROYECTO.supabase.co';
-const SUPABASE_ANON_KEY = 'TU_ANON_KEY_AQUI';
+const SUPABASE_URL = 'https://vqlmjqmagflbwbbojfqh.supabase.co/rest/v1/';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbG1qcW1hZ2ZsYndiYm9qZnFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwNjE0ODgsImV4cCI6MjA5ODYzNzQ4OH0.6vXrkK5D5psISqnkGUTM2arQgwEitJflXm4jcBMZn4c';
 
 // Email del usuario administrador (el que creaste en Supabase → Authentication → Users).
 // La dueña solo ingresa su contraseña; el email queda fijo aquí.
-const ADMIN_EMAIL = 'dueña@mi-restaurante.cl';
+const ADMIN_EMAIL = 'duena@gmail.com';
 
 // ============================================================
 // A partir de aquí no necesitas cambiar nada.
