@@ -76,13 +76,11 @@ body {
   left: -20px;
   width: calc(100vw + 40px);
   height: calc(100vh + 40px);
-  background-image:
-    linear-gradient(rgba(255, 248, 240, 0.55), rgba(255, 248, 240, 0.55)),
-    url('/images/fondo.webp');
+  background-image: url('/images/fondo.webp');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
-  filter: blur(5px);
+  filter: none;
   z-index: 0;
   pointer-events: none;
 }
