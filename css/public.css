@@ -327,6 +327,66 @@ body.theme-oscuro .to-top {
 }
 body.theme-oscuro .to-top:hover { background: #ffffff; }
 
+.install-btn {
+  position: fixed;
+  left: 16px;
+  bottom: 20px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+  z-index: 110;
+  animation: installPulse 2s ease-in-out infinite;
+}
+.install-btn:active { transform: translateY(1px); }
+body.has-cart .install-btn { bottom: 90px; }
+@keyframes installPulse {
+  0%, 100% { transform: translateY(0); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28); }
+  50%      { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(0, 0, 0, 0.32); }
+}
+
+.ios-install {
+  display: none;
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 78px;
+  background: #fff;
+  color: #1a1a1a;
+  border: 2px solid var(--accent);
+  border-radius: 14px;
+  padding: 14px 40px 14px 16px;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.28);
+  z-index: 120;
+  font-size: 14px;
+  line-height: 1.4;
+}
+body.has-cart .ios-install { bottom: 148px; }
+.ios-install-title {
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.ios-install-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: #666;
+  cursor: pointer;
+}
+
 .mesa-badge {
   display: inline-block;
   background: var(--accent);
@@ -388,7 +448,60 @@ li.pending-agregado .badge-pending {
   font-size: 13px;
   margin: 10px 0;
 }
-.platos-list { list-style: none; padding: 0; margin: 12px 0 0; }
+.pedido-frame {
+  border: 2px solid #2e7d32;
+  background: #f1faf1;
+  border-radius: 14px;
+  padding: 12px 14px 14px;
+  margin: 14px 0 18px;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.12);
+}
+.pedido-frame .pedido-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px dashed #2e7d32;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+.pedido-frame .pedido-title {
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #1b5e20;
+  font-weight: 800;
+}
+.pedido-frame .pedido-price {
+  text-align: right;
+  line-height: 1.1;
+}
+.pedido-frame .pedido-price small {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #2e7d32;
+  opacity: 0.85;
+}
+.pedido-frame .pedido-price strong {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1b5e20;
+}
+.platos-list { list-style: none; padding: 0; margin: 0; }
+.pedido-frame .platos-list li {
+  background: #d7ecd7;
+  color: #1b5e20;
+}
+.pedido-frame .platos-list .num {
+  background: #2e7d32;
+  color: #fff;
+}
+.pedido-frame .platos-list .btn-x {
+  border-color: #2e7d32;
+  color: #1b5e20;
+}
 .platos-list li {
   background: var(--accent-soft);
   color: var(--ink);
@@ -437,9 +550,9 @@ li.pending-agregado .badge-pending {
   animation: newBadgePulse 1.2s ease-in-out 2;
 }
 @keyframes platoAddedFlash {
-  0%   { background: #ffe08a; }
-  60%  { background: #fff4d6; }
-  100% { background: var(--accent-soft); outline-color: transparent; box-shadow: none; }
+  0%   { background: #fff2b0; }
+  60%  { background: #e9f5c9; }
+  100% { background: #d7ecd7; outline-color: transparent; box-shadow: none; }
 }
 @keyframes platoAddedBounce {
   0%   { transform: scale(0.96); }
