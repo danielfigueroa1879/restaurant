@@ -443,31 +443,40 @@ html { scroll-behavior: smooth; }
 }
 .step-alert {
   background: #ffe1ea;
-  color: #d3143a;
-  border: 2px solid #d3143a;
+  color: #e60023;
+  border: 2px solid #e60023;
   border-radius: 14px;
   padding: 14px 16px;
   margin: 10px 0 14px;
-  box-shadow: 0 6px 16px rgba(211, 20, 58, 0.15);
-  animation: bounceAlert 1.2s ease-in-out infinite;
+  box-shadow: 0 6px 16px rgba(230, 0, 35, 0.18);
+  animation: bounceAlertIntro 1.6s ease-out, bounceAlert 1.6s 1.6s ease-in-out infinite;
 }
 .step-alert-title {
   font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: #d3143a;
+  color: #e60023;
   margin-bottom: 4px;
 }
-.step-alert-body { font-size: 15px; line-height: 1.35; color: #d3143a; }
-.step-alert-body b { font-weight: 800; color: #d3143a; }
+.step-alert-body { font-size: 15px; line-height: 1.35; color: #e60023; }
+.step-alert-body b { font-weight: 900; color: #e60023; }
 .step-alert-cancel {
   display: inline-block;
   margin-top: 8px;
-  color: #d3143a;
+  color: #e60023;
   font-size: 13px;
   text-decoration: underline;
   opacity: 0.9;
+}
+@keyframes bounceAlertIntro {
+  0%   { transform: translateY(0); }
+  15%  { transform: translateY(-14px); }
+  30%  { transform: translateY(0); }
+  45%  { transform: translateY(-10px); }
+  60%  { transform: translateY(0); }
+  75%  { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
 }
 @keyframes bounceAlert {
   0%, 100% { transform: translateY(0); }
