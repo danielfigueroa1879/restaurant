@@ -70,20 +70,24 @@ body {
   position: relative;
   z-index: 1;
 }
+.bg-logo {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('/favicon/web-app-manifest-512x512.png');
+  background-repeat: no-repeat;
+  background-position: center 45%;
+  background-size: 55vmin;
+  filter: blur(18px);
+  opacity: 0.22;
+  z-index: 0;
+  pointer-events: none;
+}
 @media (min-width: 768px) {
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url('../favicon/web-app-manifest-512x512.png');
-    background-repeat: no-repeat;
-    background-position: center 42%;
-    background-size: 60vmin;
-    filter: blur(28px);
-    opacity: 0.13;
-    z-index: 0;
-    pointer-events: none;
-  }
+  .bg-logo { display: block; }
 }
 header { text-align: center; margin-bottom: 28px; }
 .brand {
