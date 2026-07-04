@@ -57,9 +57,13 @@ function pickPrincipal(i) {
 }
 function pickAgregado(i) {
   if (cart.platoEnCurso === null) return;
-  cart.platos.push({ p: cart.platoEnCurso, a: i });
+  cart.platos.push({ p: cart.platoEnCurso, a: i, justAdded: true });
   cart.platoEnCurso = null;
   renderAll();
+  setTimeout(() => {
+    const el = document.querySelector('.platos-list li.just-added');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 60);
 }
 function cancelPlato() { cart.platoEnCurso = null; renderAll(); }
 function removePlato(idx) { cart.platos.splice(idx, 1); renderAll(); }
@@ -259,8 +263,12 @@ function renderMenu(m) {
       html += '<ul class="platos-list">';
       cart.platos.forEach((plato, idx) => {
         const p = m.menusDelDia[plato.p], a = m.agregados[plato.a];
-        html += `<li>
-          <span class="plato-desc"><span class="num">${idx + 1}</span>${escapeHtml((p && p.nombre) || '?')} <span style="color:var(--muted)">+</span> ${escapeHtml((a && a.nombre) || '?')}</span>
+        const isNew = !!plato.justAdded;
+        if (isNew) plato.justAdded = false;
+        const cls = isNew ? ' class="just-added"' : '';
+        const badge = isNew ? '<span class="new-badge">Nuevo</span>' : '';
+        html += `<li${cls}>
+          <span class="plato-desc"><span class="num">${idx + 1}</span>${escapeHtml((p && p.nombre) || '?')} <span style="color:var(--muted)">+</span> ${escapeHtml((a && a.nombre) || '?')}${badge}</span>
           <button class="btn-x" onclick="removePlato(${idx})">Quitar</button>
         </li>`;
       });
