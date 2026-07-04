@@ -1,0 +1,26 @@
+{
+  "name": "Menú del día - Restaurante",
+  "short_name": "Menú",
+  "description": "Consulta el menú del día del restaurante y realiza tu pedido por WhatsApp.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "es-CL",
+  "theme_color": "#b8360a",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "maskable"
+    }
+  ]
+}
