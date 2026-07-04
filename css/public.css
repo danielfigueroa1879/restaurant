@@ -530,6 +530,11 @@ li.pending-agregado .badge-pending {
 .pedido-frame .platos-list li {
   background: #d7ecd7;
   color: #1b5e20;
+  gap: 10px;
+}
+.pedido-frame .platos-list .plato-desc {
+  flex: 1;
+  min-width: 0;
 }
 .pedido-frame .platos-list .num {
   background: #2e7d32;
@@ -538,6 +543,7 @@ li.pending-agregado .badge-pending {
 .pedido-frame .platos-list .btn-x {
   border-color: #2e7d32;
   color: #1b5e20;
+  flex: 0 0 auto;
 }
 .pedido-frame .pedido-subtitle {
   font-size: 11px;
