@@ -7,6 +7,8 @@ let state = {
   menusDelDia: [],
   agregados: [],
   adicionales: [],
+  bebidas: [],
+  postres: [],
   notas: ''
 };
 
@@ -62,6 +64,8 @@ function render() {
   document.getElementById('menuList').innerHTML = renderList(state.menusDelDia, 'Menu', 'opciones');
   document.getElementById('agregadoList').innerHTML = renderList(state.agregados, 'Agregado', 'agregados');
   document.getElementById('adicionalList').innerHTML = renderList(state.adicionales, 'Adicional', 'adicionales');
+  document.getElementById('bebidaList').innerHTML = renderList(state.bebidas, 'Bebida', 'bebidas');
+  document.getElementById('postreList').innerHTML = renderList(state.postres, 'Postre', 'postres');
 }
 
 function addMenu() {
@@ -96,6 +100,30 @@ function addAdicional() {
 function removeAdicional(i) { state.adicionales.splice(i, 1); render(); scheduleSave(); }
 function toggleAdicional(i) { state.adicionales[i].agotado = !state.adicionales[i].agotado; render(); scheduleSave(); }
 
+function addBebida() {
+  const n = document.getElementById('newBebidaNombre');
+  const p = document.getElementById('newBebidaPrecio');
+  const nombre = n.value.trim();
+  const precio = p.value.trim();
+  if (!nombre) return;
+  state.bebidas.push({ nombre, precio, agotado: false });
+  n.value = ''; p.value = ''; n.focus(); render(); scheduleSave();
+}
+function removeBebida(i) { state.bebidas.splice(i, 1); render(); scheduleSave(); }
+function toggleBebida(i) { state.bebidas[i].agotado = !state.bebidas[i].agotado; render(); scheduleSave(); }
+
+function addPostre() {
+  const n = document.getElementById('newPostreNombre');
+  const p = document.getElementById('newPostrePrecio');
+  const nombre = n.value.trim();
+  const precio = p.value.trim();
+  if (!nombre) return;
+  state.postres.push({ nombre, precio, agotado: false });
+  n.value = ''; p.value = ''; n.focus(); render(); scheduleSave();
+}
+function removePostre(i) { state.postres.splice(i, 1); render(); scheduleSave(); }
+function togglePostre(i) { state.postres[i].agotado = !state.postres[i].agotado; render(); scheduleSave(); }
+
 let loggedIn = false;
 
 async function login() {
@@ -125,6 +153,8 @@ async function enterEditor() {
       menusDelDia: Array.isArray(current.menusDelDia) ? current.menusDelDia.slice() : [],
       agregados: Array.isArray(current.agregados) ? current.agregados.slice() : [],
       adicionales: Array.isArray(current.adicionales) ? current.adicionales.slice() : [],
+      bebidas: Array.isArray(current.bebidas) ? current.bebidas.slice() : [],
+      postres: Array.isArray(current.postres) ? current.postres.slice() : [],
       notas: current.notas || ''
     };
     document.getElementById('restaurantName').value = state.restaurantName;
@@ -178,6 +208,8 @@ async function doSave() {
     menusDelDia: state.menusDelDia,
     agregados: state.agregados,
     adicionales: state.adicionales,
+    bebidas: state.bebidas,
+    postres: state.postres,
     notas: document.getElementById('notas').value
   };
 
@@ -204,6 +236,14 @@ document.getElementById('newAgregado').addEventListener('keydown', e => { if (e.
 document.getElementById('newAdicionalPrecio').addEventListener('keydown', e => { if (e.key === 'Enter') addAdicional(); });
 document.getElementById('newAdicionalNombre').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('newAdicionalPrecio').focus();
+});
+document.getElementById('newBebidaPrecio').addEventListener('keydown', e => { if (e.key === 'Enter') addBebida(); });
+document.getElementById('newBebidaNombre').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('newBebidaPrecio').focus();
+});
+document.getElementById('newPostrePrecio').addEventListener('keydown', e => { if (e.key === 'Enter') addPostre(); });
+document.getElementById('newPostreNombre').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('newPostrePrecio').focus();
 });
 ['restaurantName', 'date', 'menuPrice', 'whatsappNumber', 'notas'].forEach(id => {
   document.getElementById(id).addEventListener('input', () => scheduleSave(800));

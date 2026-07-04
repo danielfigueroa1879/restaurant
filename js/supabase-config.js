@@ -30,6 +30,8 @@ function dbToMenu(row) {
     menusDelDia: row.menus_del_dia || [],
     agregados: row.agregados || [],
     adicionales: row.adicionales || [],
+    bebidas: row.bebidas || [],
+    postres: row.postres || [],
     notas: row.notas || '',
     updatedAt: row.updated_at || null
   };
@@ -45,6 +47,8 @@ function menuToDb(m) {
     menus_del_dia: m.menusDelDia || [],
     agregados: m.agregados || [],
     adicionales: m.adicionales || [],
+    bebidas: m.bebidas || [],
+    postres: m.postres || [],
     notas: m.notas || '',
     updated_at: new Date().toISOString()
   };

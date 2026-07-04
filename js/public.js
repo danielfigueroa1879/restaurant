@@ -29,7 +29,13 @@ function getMesa() {
 
 // ---------- state ----------
 let currentMenu = null;
-let cart = { platos: [], platoEnCurso: null, adicionales: {} };
+let cart = { platos: [], platoEnCurso: null, adicionales: {}, bebidas: {}, postres: {} };
+
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 // ---------- cart actions ----------
 function pickPrincipal(i) {
@@ -48,26 +54,38 @@ function removePlato(idx) { cart.platos.splice(idx, 1); renderAll(); }
 function principalUsedCount(i) { return cart.platos.filter(p => p.p === i).length; }
 function agregadoUsedCount(i) { return cart.platos.filter(p => p.a === i).length; }
 
-function changeAdicional(index, delta) {
-  const cur = cart.adicionales[index] || 0;
+function changeQty(bucket, index, delta) {
+  const cur = cart[bucket][index] || 0;
   const next = Math.max(0, cur + delta);
-  if (next === 0) delete cart.adicionales[index];
-  else cart.adicionales[index] = next;
+  if (next === 0) delete cart[bucket][index];
+  else cart[bucket][index] = next;
   renderAll();
 }
+function changeAdicional(index, delta) { changeQty('adicionales', index, delta); }
+function changeBebida(index, delta) { changeQty('bebidas', index, delta); }
+function changePostre(index, delta) { changeQty('postres', index, delta); }
 
+function sumQty(bucket) {
+  return Object.values(cart[bucket]).reduce((a, b) => a + b, 0);
+}
+function sumBucketTotal(bucket, list) {
+  let total = 0;
+  for (const [i, q] of Object.entries(cart[bucket])) {
+    const it = list && list[i];
+    if (it) total += q * priceNum(it.precio);
+  }
+  return total;
+}
 function cartCount() {
-  const sumAdi = Object.values(cart.adicionales).reduce((a, b) => a + b, 0);
-  return cart.platos.length + sumAdi;
+  return cart.platos.length + sumQty('adicionales') + sumQty('bebidas') + sumQty('postres');
 }
 function cartTotal() {
   if (!currentMenu) return 0;
   const price = priceNum(currentMenu.menuPrice || '5000');
   let total = cart.platos.length * price;
-  for (const [i, q] of Object.entries(cart.adicionales)) {
-    const it = currentMenu.adicionales[i];
-    if (it) total += q * priceNum(it.precio);
-  }
+  total += sumBucketTotal('adicionales', currentMenu.adicionales);
+  total += sumBucketTotal('bebidas', currentMenu.bebidas);
+  total += sumBucketTotal('postres', currentMenu.postres);
   return total;
 }
 
@@ -116,28 +134,52 @@ function sendWhatsApp() {
     msg += '\n';
   }
 
-  const adiItems = Object.entries(cart.adicionales);
-  if (adiItems.length) {
-    msg += '*Adicionales:*\n';
-    for (const [i, q] of adiItems) {
-      const it = currentMenu.adicionales[i];
+  const appendBucket = (title, bucket, list) => {
+    const items = Object.entries(cart[bucket]);
+    if (!items.length) return;
+    msg += `*${title}:*\n`;
+    for (const [i, q] of items) {
+      const it = list && list[i];
       if (!it) continue;
       msg += `• ${q} × ${it.nombre} — $${(q * priceNum(it.precio)).toLocaleString('es-CL')}\n`;
     }
     msg += '\n';
-  }
+  };
+  appendBucket('Adicionales', 'adicionales', currentMenu.adicionales);
+  appendBucket('Bebidas', 'bebidas', currentMenu.bebidas);
+  appendBucket('Postres', 'postres', currentMenu.postres);
   msg += `*Total: $${cartTotal().toLocaleString('es-CL')}*`;
 
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
-function qtyControlHtml(index) {
-  const q = cart.adicionales[index] || 0;
+function qtyControlHtml(index, bucket = 'adicionales') {
+  const q = cart[bucket][index] || 0;
+  const fnMap = { adicionales: 'changeAdicional', bebidas: 'changeBebida', postres: 'changePostre' };
+  const fn = fnMap[bucket];
   return `<div class="qty">
-    <button onclick="changeAdicional(${index}, -1)" ${q === 0 ? 'disabled' : ''}>−</button>
+    <button onclick="${fn}(${index}, -1)" ${q === 0 ? 'disabled' : ''}>−</button>
     <span class="n">${q}</span>
-    <button onclick="changeAdicional(${index}, 1)">+</button>
+    <button onclick="${fn}(${index}, 1)">+</button>
   </div>`;
+}
+
+function renderCartaCard(title, sectionId, list, bucket) {
+  if (!Array.isArray(list) || list.length === 0) return '';
+  let html = `<div class="card" id="${sectionId}">`;
+  html += `<div class="banner">${escapeHtml(title)}</div>`;
+  html += '<ul class="adicionales">';
+  for (let i = 0; i < list.length; i++) {
+    const a = list[i];
+    const p = a.precio ? `<span class="p">${escapeHtml(formatPrice(a.precio))}</span>` : '';
+    if (a.agotado) {
+      html += `<li class="agotado"><span class="name">${escapeHtml(a.nombre)}</span><span class="badge-out">Agotado</span>${p}</li>`;
+    } else {
+      html += `<li><span class="name">${escapeHtml(a.nombre)}</span>${p}${qtyControlHtml(i, bucket)}</li>`;
+    }
+  }
+  html += '</ul></div>';
+  return html;
 }
 
 function applyTheme(name) {
@@ -162,7 +204,9 @@ function renderMenu(m) {
   const hasMenus = Array.isArray(m.menusDelDia) && m.menusDelDia.length > 0;
   const hasAgregados = Array.isArray(m.agregados) && m.agregados.length > 0;
   const hasAdicionales = Array.isArray(m.adicionales) && m.adicionales.length > 0;
-  const hasAny = hasMenus || hasAgregados || hasAdicionales || (m.notas && m.notas.trim());
+  const hasBebidas = Array.isArray(m.bebidas) && m.bebidas.length > 0;
+  const hasPostres = Array.isArray(m.postres) && m.postres.length > 0;
+  const hasAny = hasMenus || hasAgregados || hasAdicionales || hasBebidas || hasPostres || (m.notas && m.notas.trim());
 
   if (!hasAny) {
     content.innerHTML = '<div class="card"><div class="empty">El menú de hoy aún no está publicado.<br/>Vuelve en unos minutos.</div></div>';
@@ -173,8 +217,28 @@ function renderMenu(m) {
   const enCurso = cart.platoEnCurso;
   let html = '';
 
+  if (hasMenus || hasAgregados || hasAdicionales || hasBebidas || hasPostres) {
+    html += '<div class="card nav-card">';
+    html += '<div class="banner">Menú</div>';
+    html += '<div class="nav-hint">Toca un botón para ir directo a la sección que quieres ver.</div>';
+    html += '<div class="nav-buttons">';
+    if (hasMenus || hasAgregados) {
+      html += `<button class="nav-btn" onclick="scrollToSection('section-menu-dia')">Menú del día</button>`;
+    }
+    if (hasAdicionales) {
+      html += `<button class="nav-btn" onclick="scrollToSection('section-adicionales')">A la carta</button>`;
+    }
+    if (hasBebidas) {
+      html += `<button class="nav-btn" onclick="scrollToSection('section-bebidas')">Bebidas</button>`;
+    }
+    if (hasPostres) {
+      html += `<button class="nav-btn" onclick="scrollToSection('section-postres')">Postres</button>`;
+    }
+    html += '</div></div>';
+  }
+
   if (hasMenus || hasAgregados) {
-    html += '<div class="card">';
+    html += '<div class="card" id="section-menu-dia">';
     html += '<div class="banner">Menú del día</div>';
     html += `<div class="price-tag"><small>Precio por plato</small><strong>${escapeHtml(formatPrice(m.menuPrice || '5000'))}</strong></div>`;
 
@@ -241,20 +305,13 @@ function renderMenu(m) {
   }
 
   if (hasAdicionales) {
-    html += '<div class="card">';
-    html += '<div class="banner">Adicionales a la carta</div>';
-    html += '<ul class="adicionales">';
-    for (let i = 0; i < m.adicionales.length; i++) {
-      const a = m.adicionales[i];
-      const p = a.precio ? `<span class="p">${escapeHtml(formatPrice(a.precio))}</span>` : '';
-      if (a.agotado) {
-        html += `<li class="agotado"><span class="name">${escapeHtml(a.nombre)}</span><span class="badge-out">Agotado</span>${p}</li>`;
-      } else {
-        html += `<li><span class="name">${escapeHtml(a.nombre)}</span>${p}${qtyControlHtml(i)}</li>`;
-      }
-    }
-    html += '</ul>';
-    html += '</div>';
+    html += renderCartaCard('Adicionales a la carta', 'section-adicionales', m.adicionales, 'adicionales');
+  }
+  if (hasBebidas) {
+    html += renderCartaCard('Bebidas', 'section-bebidas', m.bebidas, 'bebidas');
+  }
+  if (hasPostres) {
+    html += renderCartaCard('Postres', 'section-postres', m.postres, 'postres');
   }
 
   content.innerHTML = html;
