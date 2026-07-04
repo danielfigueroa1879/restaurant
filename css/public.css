@@ -71,23 +71,19 @@ body {
   z-index: 1;
 }
 .bg-logo {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url('/favicon/web-app-manifest-512x512.png');
+  background-image:
+    linear-gradient(rgba(255, 248, 240, 0.55), rgba(255, 248, 240, 0.55)),
+    url('/images/fondo.webp');
   background-repeat: no-repeat;
-  background-position: center 45%;
-  background-size: 55vmin;
-  filter: blur(18px);
-  opacity: 0.22;
+  background-position: center center;
+  background-size: cover;
   z-index: 0;
   pointer-events: none;
-}
-@media (min-width: 768px) {
-  .bg-logo { display: block; }
 }
 header { text-align: center; margin-bottom: 28px; }
 .brand {
