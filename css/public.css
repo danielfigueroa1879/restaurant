@@ -539,6 +539,33 @@ li.pending-agregado .badge-pending {
   border-color: #2e7d32;
   color: #1b5e20;
 }
+.pedido-frame .pedido-subtitle {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #2e7d32;
+  font-weight: 800;
+  margin: 10px 0 6px;
+  padding-top: 8px;
+  border-top: 1px dashed #a5d6a7;
+}
+.pedido-frame .pedido-extras li {
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.pedido-frame .pedido-extras .num {
+  background: #66bb6a;
+  min-width: 26px;
+  width: auto;
+  border-radius: 12px;
+  padding: 0 8px;
+}
+.pedido-frame .pedido-subtotal {
+  font-weight: 700;
+  color: #1b5e20;
+  font-size: 13px;
+  white-space: nowrap;
+}
 .platos-list li {
   background: var(--accent-soft);
   color: var(--ink);
