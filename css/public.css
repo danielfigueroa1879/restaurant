@@ -387,3 +387,33 @@ li.pending-agregado .badge-pending {
   border-radius: 6px;
   cursor: pointer;
 }
+
+html { scroll-behavior: smooth; }
+
+.nav-card { text-align: center; }
+.nav-hint {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+.nav-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+.nav-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.1s, background 0.15s;
+}
+.nav-btn:hover { background: #922a08; transform: translateY(-1px); }
+.nav-btn:active { transform: translateY(0); }
+body.theme-oscuro .nav-btn:hover { background: #d1901f; }
