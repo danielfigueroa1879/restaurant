@@ -67,6 +67,23 @@ body {
   max-width: 640px;
   margin: 0 auto;
   padding: 32px 20px 60px;
+  position: relative;
+  z-index: 1;
+}
+@media (min-width: 768px) {
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url('../favicon/web-app-manifest-512x512.png');
+    background-repeat: no-repeat;
+    background-position: center 42%;
+    background-size: 60vmin;
+    filter: blur(28px);
+    opacity: 0.13;
+    z-index: 0;
+    pointer-events: none;
+  }
 }
 header { text-align: center; margin-bottom: 28px; }
 .brand {
@@ -174,26 +191,32 @@ header { text-align: center; margin-bottom: 28px; }
 .adicionales { list-style: none; padding: 0; margin: 0; }
 .adicionales li {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding: 12px 0;
   border-bottom: 1px dashed var(--line);
-  gap: 10px;
+  gap: 12px;
 }
 .adicionales li:last-child { border-bottom: none; }
-.adicionales .name { font-size: 16px; }
+.adicionales .name {
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+}
 .adicionales .p {
-  background: var(--accent);
-  color: #fff;
-  padding: 4px 12px;
+  flex: 0 0 auto;
+  text-align: right;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 3px 10px;
   border-radius: 999px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   white-space: nowrap;
+  margin-right: 8px;
 }
 .adicionales li.agotado { opacity: 0.35; }
 .adicionales li.agotado .name { text-decoration: line-through; color: var(--muted); }
-.adicionales li.agotado .p { background: var(--muted); }
+.adicionales li.agotado .p { background: var(--line); color: var(--muted); }
 .notes {
   background: var(--accent-soft);
   border-left: 4px solid var(--accent);
