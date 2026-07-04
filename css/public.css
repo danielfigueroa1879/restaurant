@@ -442,35 +442,36 @@ html { scroll-behavior: smooth; }
   vertical-align: -3px;
 }
 .step-alert {
-  background: var(--accent);
-  color: #fff;
+  background: #ffe1ea;
+  color: #d3143a;
+  border: 2px solid #d3143a;
   border-radius: 14px;
   padding: 14px 16px;
   margin: 10px 0 14px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-  animation: pulseAlert 1.6s ease-in-out infinite;
+  box-shadow: 0 6px 16px rgba(211, 20, 58, 0.15);
+  animation: bounceAlert 1.2s ease-in-out infinite;
 }
 .step-alert-title {
   font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  opacity: 0.9;
+  color: #d3143a;
   margin-bottom: 4px;
 }
-.step-alert-body { font-size: 15px; line-height: 1.35; }
-.step-alert-body b { font-weight: 800; }
+.step-alert-body { font-size: 15px; line-height: 1.35; color: #d3143a; }
+.step-alert-body b { font-weight: 800; color: #d3143a; }
 .step-alert-cancel {
   display: inline-block;
   margin-top: 8px;
-  color: #fff;
+  color: #d3143a;
   font-size: 13px;
   text-decoration: underline;
-  opacity: 0.85;
+  opacity: 0.9;
 }
-@keyframes pulseAlert {
-  0%, 100% { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12); }
-  50% { box-shadow: 0 6px 22px rgba(0, 0, 0, 0.28); }
+@keyframes bounceAlert {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 
 .options.highlight li:not(.agotado) {
