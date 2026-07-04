@@ -260,10 +260,11 @@ function renderMenu(m) {
     if (!cart.platos.length) {
       html += `<div class="price-tag"><small>Precio por plato</small><strong>${priceHtml}</strong></div>`;
     } else {
+      const totalStr = '$' + cartTotal().toLocaleString('es-CL');
       html += '<div class="pedido-frame">';
       html += `<div class="pedido-header">
         <div class="pedido-title">Tu pedido</div>
-        <div class="pedido-price"><small>Precio por plato</small><strong>${priceHtml}</strong></div>
+        <div class="pedido-price"><small>Total</small><strong>${escapeHtml(totalStr)}</strong></div>
       </div>`;
       html += '<ul class="platos-list">';
       cart.platos.forEach((plato, idx) => {
