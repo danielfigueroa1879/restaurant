@@ -415,6 +415,42 @@ li.pending-agregado .badge-pending {
   margin-right: 8px;
 }
 .platos-list .plato-desc { flex: 1; }
+.platos-list li.just-added {
+  background: #fff4d6;
+  outline: 2px solid #f0a020;
+  outline-offset: 0;
+  animation: platoAddedFlash 2.4s ease-out both, platoAddedBounce 0.6s ease-out both;
+  box-shadow: 0 8px 22px rgba(240, 160, 32, 0.35);
+}
+.platos-list .new-badge {
+  display: inline-block;
+  background: #f0a020;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 8px;
+  vertical-align: middle;
+  animation: newBadgePulse 1.2s ease-in-out 2;
+}
+@keyframes platoAddedFlash {
+  0%   { background: #ffe08a; }
+  60%  { background: #fff4d6; }
+  100% { background: var(--accent-soft); outline-color: transparent; box-shadow: none; }
+}
+@keyframes platoAddedBounce {
+  0%   { transform: scale(0.96); }
+  40%  { transform: scale(1.03); }
+  70%  { transform: scale(0.99); }
+  100% { transform: scale(1); }
+}
+@keyframes newBadgePulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.15); }
+}
 .platos-list .btn-x {
   background: transparent;
   border: 1px solid var(--line);
