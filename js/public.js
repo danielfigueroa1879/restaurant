@@ -81,7 +81,17 @@ function changeQty(bucket, index, delta) {
   const next = Math.max(0, cur + delta);
   if (next === 0) delete cart[bucket][index];
   else cart[bucket][index] = next;
+  if (delta > 0 && next > cur) {
+    cart._justAddedExtra = { bucket, index: String(index) };
+  }
   renderAll();
+  if (delta > 0 && next > cur) {
+    setTimeout(() => {
+      const el = document.querySelector('.pedido-extras li.just-added') ||
+                 document.querySelector('.pedido-frame');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 60);
+  }
 }
 function changeAdicional(index, delta) { changeQty('adicionales', index, delta); }
 function changeBebida(index, delta) { changeQty('bebidas', index, delta); }
@@ -265,7 +275,7 @@ function renderMenu(m) {
     const priceHtml = escapeHtml(formatPrice(m.menuPrice || '5000'));
     const extraBuckets = [
       { name: 'Bebidas', key: 'bebidas', list: m.bebidas },
-      { name: 'Adicionales', key: 'adicionales', list: m.adicionales },
+      { name: 'Adicionales a la carta', key: 'adicionales', list: m.adicionales },
       { name: 'Postres', key: 'postres', list: m.postres }
     ];
     const hasAnyExtra = extraBuckets.some(b =>
@@ -298,6 +308,7 @@ function renderMenu(m) {
         });
         html += '</ul>';
       }
+      const justAdded = cart._justAddedExtra;
       for (const bucket of extraBuckets) {
         if (!Array.isArray(bucket.list)) continue;
         const entries = Object.entries(cart[bucket.key]).filter(([, q]) => q > 0);
@@ -309,14 +320,18 @@ function renderMenu(m) {
           if (!item) continue;
           const subtotal = q * priceNum(item.precio);
           const subtotalStr = '$' + subtotal.toLocaleString('es-CL');
-          html += `<li>
-            <span class="plato-desc"><span class="num">${q}</span>${escapeHtml(item.nombre)}</span>
+          const isNew = justAdded && justAdded.bucket === bucket.key && justAdded.index === String(i);
+          const cls = isNew ? ' class="just-added"' : '';
+          const badge = isNew ? '<span class="new-badge">Nuevo</span>' : '';
+          html += `<li${cls}>
+            <span class="plato-desc"><span class="num">${q}</span>${escapeHtml(item.nombre)}${badge}</span>
             <span class="pedido-subtotal">${escapeHtml(subtotalStr)}</span>
             <button class="btn-x" onclick="removeExtra('${bucket.key}', ${i})">Quitar</button>
           </li>`;
         }
         html += '</ul>';
       }
+      cart._justAddedExtra = null;
       html += '</div>';
     }
 
