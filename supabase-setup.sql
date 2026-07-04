@@ -21,11 +21,17 @@ create table if not exists public.menu_config (
   updated_at        timestamptz default now()
 );
 
--- Migración: si la tabla ya existía, agrega las columnas nuevas (bebidas y postres)
+-- Migración: si la tabla ya existía, agrega las columnas nuevas
 alter table public.menu_config
   add column if not exists bebidas jsonb default '[]'::jsonb;
 alter table public.menu_config
   add column if not exists postres jsonb default '[]'::jsonb;
+alter table public.menu_config
+  add column if not exists show_adicionales boolean default true;
+alter table public.menu_config
+  add column if not exists show_bebidas boolean default true;
+alter table public.menu_config
+  add column if not exists show_postres boolean default true;
 
 -- 2. Fila única con id = 1 (todos leen y escriben aquí)
 insert into public.menu_config (id) values (1)

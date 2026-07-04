@@ -78,8 +78,15 @@
       </div>
 
       <div class="card">
-        <h2>Adicionales a la carta</h2>
-        <div class="hint">Ej. Completos, Churrascos, Barros Luco... cada uno con su precio.</div>
+        <div class="card-head">
+          <h2>Adicionales a la carta</h2>
+          <label class="switch">
+            <input type="checkbox" id="showAdicionales" checked />
+            <span class="switch-slider"></span>
+            <span class="switch-label">Mostrar</span>
+          </label>
+        </div>
+        <div class="hint">Ej. Completos, Churrascos, Barros Luco... cada uno con su precio. Si el interruptor está apagado, esta sección no aparecerá al cliente.</div>
         <div class="row-2">
           <input type="text" id="newAdicionalNombre" placeholder="Ej. Barros Luco" />
           <input type="text" id="newAdicionalPrecio" placeholder="Precio (ej. 4500)" />
@@ -89,8 +96,15 @@
       </div>
 
       <div class="card">
-        <h2>Bebidas</h2>
-        <div class="hint">Ej. Coca-Cola, Jugo natural, Agua mineral... cada una con su precio.</div>
+        <div class="card-head">
+          <h2>Bebidas</h2>
+          <label class="switch">
+            <input type="checkbox" id="showBebidas" checked />
+            <span class="switch-slider"></span>
+            <span class="switch-label">Mostrar</span>
+          </label>
+        </div>
+        <div class="hint">Ej. Coca-Cola, Jugo natural, Agua mineral... cada una con su precio. Si el interruptor está apagado, esta sección no aparecerá al cliente.</div>
         <div class="row-2">
           <input type="text" id="newBebidaNombre" placeholder="Ej. Coca-Cola 350cc" />
           <input type="text" id="newBebidaPrecio" placeholder="Precio (ej. 1500)" />
@@ -100,8 +114,15 @@
       </div>
 
       <div class="card">
-        <h2>Postres</h2>
-        <div class="hint">Ej. Flan casero, Torta de chocolate, Helado... cada uno con su precio.</div>
+        <div class="card-head">
+          <h2>Postres</h2>
+          <label class="switch">
+            <input type="checkbox" id="showPostres" checked />
+            <span class="switch-slider"></span>
+            <span class="switch-label">Mostrar</span>
+          </label>
+        </div>
+        <div class="hint">Ej. Flan casero, Torta de chocolate, Helado... cada uno con su precio. Si el interruptor está apagado, esta sección no aparecerá al cliente.</div>
         <div class="row-2">
           <input type="text" id="newPostreNombre" placeholder="Ej. Flan casero" />
           <input type="text" id="newPostrePrecio" placeholder="Precio (ej. 2500)" />
