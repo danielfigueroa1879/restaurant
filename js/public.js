@@ -257,7 +257,15 @@ function renderMenu(m) {
     html += '<div class="card" id="section-menu-dia">';
     html += '<div class="banner">Menú del día</div>';
     const priceHtml = escapeHtml(formatPrice(m.menuPrice || '5000'));
-    if (!cart.platos.length) {
+    const extraBuckets = [
+      { name: 'Bebidas', key: 'bebidas', list: m.bebidas },
+      { name: 'Adicionales', key: 'adicionales', list: m.adicionales },
+      { name: 'Postres', key: 'postres', list: m.postres }
+    ];
+    const hasAnyExtra = extraBuckets.some(b =>
+      Array.isArray(b.list) && Object.values(cart[b.key]).some(q => q > 0)
+    );
+    if (!cart.platos.length && !hasAnyExtra) {
       html += `<div class="price-tag"><small>Precio por plato</small><strong>${priceHtml}</strong></div>`;
     } else {
       const totalStr = '$' + cartTotal().toLocaleString('es-CL');
@@ -266,19 +274,39 @@ function renderMenu(m) {
         <div class="pedido-title">Tu pedido</div>
         <div class="pedido-price"><small>Total</small><strong>${escapeHtml(totalStr)}</strong></div>
       </div>`;
-      html += '<ul class="platos-list">';
-      cart.platos.forEach((plato, idx) => {
-        const p = m.menusDelDia[plato.p], a = m.agregados[plato.a];
-        const isNew = !!plato.justAdded;
-        if (isNew) plato.justAdded = false;
-        const cls = isNew ? ' class="just-added"' : '';
-        const badge = isNew ? '<span class="new-badge">Nuevo</span>' : '';
-        html += `<li${cls}>
-          <span class="plato-desc"><span class="num">${idx + 1}</span>${escapeHtml((p && p.nombre) || '?')} <span style="color:var(--muted)">+</span> ${escapeHtml((a && a.nombre) || '?')}${badge}</span>
-          <button class="btn-x" onclick="removePlato(${idx})">Quitar</button>
-        </li>`;
-      });
-      html += '</ul>';
+      if (cart.platos.length) {
+        html += '<ul class="platos-list">';
+        cart.platos.forEach((plato, idx) => {
+          const p = m.menusDelDia[plato.p], a = m.agregados[plato.a];
+          const isNew = !!plato.justAdded;
+          if (isNew) plato.justAdded = false;
+          const cls = isNew ? ' class="just-added"' : '';
+          const badge = isNew ? '<span class="new-badge">Nuevo</span>' : '';
+          html += `<li${cls}>
+            <span class="plato-desc"><span class="num">${idx + 1}</span>${escapeHtml((p && p.nombre) || '?')} <span style="color:var(--muted)">+</span> ${escapeHtml((a && a.nombre) || '?')}${badge}</span>
+            <button class="btn-x" onclick="removePlato(${idx})">Quitar</button>
+          </li>`;
+        });
+        html += '</ul>';
+      }
+      for (const bucket of extraBuckets) {
+        if (!Array.isArray(bucket.list)) continue;
+        const entries = Object.entries(cart[bucket.key]).filter(([, q]) => q > 0);
+        if (!entries.length) continue;
+        html += `<div class="pedido-subtitle">${bucket.name}</div>`;
+        html += '<ul class="platos-list pedido-extras">';
+        for (const [i, q] of entries) {
+          const item = bucket.list[i];
+          if (!item) continue;
+          const subtotal = q * priceNum(item.precio);
+          const subtotalStr = '$' + subtotal.toLocaleString('es-CL');
+          html += `<li>
+            <span class="plato-desc"><span class="num">${q}</span>${escapeHtml(item.nombre)}</span>
+            <span class="pedido-subtotal">${escapeHtml(subtotalStr)}</span>
+          </li>`;
+        }
+        html += '</ul>';
+      }
       html += '</div>';
     }
 
