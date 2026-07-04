@@ -256,10 +256,15 @@ function renderMenu(m) {
   if (hasMenus || hasAgregados) {
     html += '<div class="card" id="section-menu-dia">';
     html += '<div class="banner">Menú del día</div>';
-    html += `<div class="price-tag"><small>Precio por plato</small><strong>${escapeHtml(formatPrice(m.menuPrice || '5000'))}</strong></div>`;
-
-    if (cart.platos.length) {
-      html += '<div class="section-title">Tu pedido</div>';
+    const priceHtml = escapeHtml(formatPrice(m.menuPrice || '5000'));
+    if (!cart.platos.length) {
+      html += `<div class="price-tag"><small>Precio por plato</small><strong>${priceHtml}</strong></div>`;
+    } else {
+      html += '<div class="pedido-frame">';
+      html += `<div class="pedido-header">
+        <div class="pedido-title">Tu pedido</div>
+        <div class="pedido-price"><small>Precio por plato</small><strong>${priceHtml}</strong></div>
+      </div>`;
       html += '<ul class="platos-list">';
       cart.platos.forEach((plato, idx) => {
         const p = m.menusDelDia[plato.p], a = m.agregados[plato.a];
@@ -273,6 +278,7 @@ function renderMenu(m) {
         </li>`;
       });
       html += '</ul>';
+      html += '</div>';
     }
 
     if (hasMenus) {
