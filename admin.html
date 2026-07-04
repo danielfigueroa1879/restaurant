@@ -89,6 +89,28 @@
       </div>
 
       <div class="card">
+        <h2>Bebidas</h2>
+        <div class="hint">Ej. Coca-Cola, Jugo natural, Agua mineral... cada una con su precio.</div>
+        <div class="row-2">
+          <input type="text" id="newBebidaNombre" placeholder="Ej. Coca-Cola 350cc" />
+          <input type="text" id="newBebidaPrecio" placeholder="Precio (ej. 1500)" />
+          <button class="btn-add" onclick="addBebida()">Agregar</button>
+        </div>
+        <ul class="items" id="bebidaList"></ul>
+      </div>
+
+      <div class="card">
+        <h2>Postres</h2>
+        <div class="hint">Ej. Flan casero, Torta de chocolate, Helado... cada uno con su precio.</div>
+        <div class="row-2">
+          <input type="text" id="newPostreNombre" placeholder="Ej. Flan casero" />
+          <input type="text" id="newPostrePrecio" placeholder="Precio (ej. 2500)" />
+          <button class="btn-add" onclick="addPostre()">Agregar</button>
+        </div>
+        <ul class="items" id="postreList"></ul>
+      </div>
+
+      <div class="card">
         <div id="autoStatus" class="autosave-status">
           <span class="dot"></span>
           <span id="autoStatusText">Autoguardado activado</span>
