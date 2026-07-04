@@ -67,6 +67,12 @@ function pickAgregado(i) {
 }
 function cancelPlato() { cart.platoEnCurso = null; renderAll(); }
 function removePlato(idx) { cart.platos.splice(idx, 1); renderAll(); }
+function removeExtra(bucket, index) {
+  if (cart[bucket] && cart[bucket][index] !== undefined) {
+    delete cart[bucket][index];
+    renderAll();
+  }
+}
 function principalUsedCount(i) { return cart.platos.filter(p => p.p === i).length; }
 function agregadoUsedCount(i) { return cart.platos.filter(p => p.a === i).length; }
 
@@ -274,6 +280,8 @@ function renderMenu(m) {
         <div class="pedido-title">Tu pedido</div>
         <div class="pedido-price"><small>Total</small><strong>${escapeHtml(totalStr)}</strong></div>
       </div>`;
+      const platoPrice = priceNum(m.menuPrice || '5000');
+      const platoPriceStr = '$' + platoPrice.toLocaleString('es-CL');
       if (cart.platos.length) {
         html += '<ul class="platos-list">';
         cart.platos.forEach((plato, idx) => {
@@ -284,6 +292,7 @@ function renderMenu(m) {
           const badge = isNew ? '<span class="new-badge">Nuevo</span>' : '';
           html += `<li${cls}>
             <span class="plato-desc"><span class="num">${idx + 1}</span>${escapeHtml((p && p.nombre) || '?')} <span style="color:var(--muted)">+</span> ${escapeHtml((a && a.nombre) || '?')}${badge}</span>
+            <span class="pedido-subtotal">${escapeHtml(platoPriceStr)}</span>
             <button class="btn-x" onclick="removePlato(${idx})">Quitar</button>
           </li>`;
         });
@@ -303,6 +312,7 @@ function renderMenu(m) {
           html += `<li>
             <span class="plato-desc"><span class="num">${q}</span>${escapeHtml(item.nombre)}</span>
             <span class="pedido-subtotal">${escapeHtml(subtotalStr)}</span>
+            <button class="btn-x" onclick="removeExtra('${bucket.key}', ${i})">Quitar</button>
           </li>`;
         }
         html += '</ul>';
