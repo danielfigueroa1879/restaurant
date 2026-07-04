@@ -32,6 +32,9 @@ function dbToMenu(row) {
     adicionales: row.adicionales || [],
     bebidas: row.bebidas || [],
     postres: row.postres || [],
+    showAdicionales: row.show_adicionales !== false,
+    showBebidas: row.show_bebidas !== false,
+    showPostres: row.show_postres !== false,
     notas: row.notas || '',
     updatedAt: row.updated_at || null
   };
@@ -49,6 +52,9 @@ function menuToDb(m) {
     adicionales: m.adicionales || [],
     bebidas: m.bebidas || [],
     postres: m.postres || [],
+    show_adicionales: m.showAdicionales !== false,
+    show_bebidas: m.showBebidas !== false,
+    show_postres: m.showPostres !== false,
     notas: m.notas || '',
     updated_at: new Date().toISOString()
   };

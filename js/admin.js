@@ -9,6 +9,9 @@ let state = {
   adicionales: [],
   bebidas: [],
   postres: [],
+  showAdicionales: true,
+  showBebidas: true,
+  showPostres: true,
   notas: ''
 };
 
@@ -155,6 +158,9 @@ async function enterEditor() {
       adicionales: Array.isArray(current.adicionales) ? current.adicionales.slice() : [],
       bebidas: Array.isArray(current.bebidas) ? current.bebidas.slice() : [],
       postres: Array.isArray(current.postres) ? current.postres.slice() : [],
+      showAdicionales: current.showAdicionales !== false,
+      showBebidas: current.showBebidas !== false,
+      showPostres: current.showPostres !== false,
       notas: current.notas || ''
     };
     document.getElementById('restaurantName').value = state.restaurantName;
@@ -162,6 +168,9 @@ async function enterEditor() {
     document.getElementById('menuPrice').value = state.menuPrice;
     document.getElementById('whatsappNumber').value = state.whatsappNumber;
     document.getElementById('notas').value = state.notas;
+    document.getElementById('showAdicionales').checked = state.showAdicionales;
+    document.getElementById('showBebidas').checked = state.showBebidas;
+    document.getElementById('showPostres').checked = state.showPostres;
     loggedIn = true;
     document.getElementById('loginCard').classList.add('hidden');
     document.getElementById('editor').classList.remove('hidden');
@@ -210,6 +219,9 @@ async function doSave() {
     adicionales: state.adicionales,
     bebidas: state.bebidas,
     postres: state.postres,
+    showAdicionales: document.getElementById('showAdicionales').checked,
+    showBebidas: document.getElementById('showBebidas').checked,
+    showPostres: document.getElementById('showPostres').checked,
     notas: document.getElementById('notas').value
   };
 
@@ -244,6 +256,9 @@ document.getElementById('newBebidaNombre').addEventListener('keydown', e => {
 document.getElementById('newPostrePrecio').addEventListener('keydown', e => { if (e.key === 'Enter') addPostre(); });
 document.getElementById('newPostreNombre').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('newPostrePrecio').focus();
+});
+['showAdicionales', 'showBebidas', 'showPostres'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => scheduleSave(100));
 });
 ['restaurantName', 'date', 'menuPrice', 'whatsappNumber', 'notas'].forEach(id => {
   document.getElementById(id).addEventListener('input', () => scheduleSave(800));

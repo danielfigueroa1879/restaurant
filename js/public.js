@@ -36,12 +36,24 @@ function scrollToSection(id) {
   if (!el) return;
   el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('toTopBtn');
+  if (!btn) return;
+  btn.classList.toggle('visible', window.scrollY > 300);
+}, { passive: true });
 
 // ---------- cart actions ----------
 function pickPrincipal(i) {
   if (cart.platoEnCurso !== null) return;
   cart.platoEnCurso = i;
   renderAll();
+  setTimeout(() => {
+    const target = document.getElementById('agregado-section');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 60);
 }
 function pickAgregado(i) {
   if (cart.platoEnCurso === null) return;
@@ -203,9 +215,9 @@ function renderMenu(m) {
 
   const hasMenus = Array.isArray(m.menusDelDia) && m.menusDelDia.length > 0;
   const hasAgregados = Array.isArray(m.agregados) && m.agregados.length > 0;
-  const hasAdicionales = Array.isArray(m.adicionales) && m.adicionales.length > 0;
-  const hasBebidas = Array.isArray(m.bebidas) && m.bebidas.length > 0;
-  const hasPostres = Array.isArray(m.postres) && m.postres.length > 0;
+  const hasAdicionales = m.showAdicionales !== false && Array.isArray(m.adicionales) && m.adicionales.length > 0;
+  const hasBebidas = m.showBebidas !== false && Array.isArray(m.bebidas) && m.bebidas.length > 0;
+  const hasPostres = m.showPostres !== false && Array.isArray(m.postres) && m.postres.length > 0;
   const hasAny = hasMenus || hasAgregados || hasAdicionales || hasBebidas || hasPostres || (m.notas && m.notas.trim());
 
   if (!hasAny) {
@@ -256,11 +268,7 @@ function renderMenu(m) {
     }
 
     if (hasMenus) {
-      html += '<div class="section-title">Principal</div>';
-      if (enCurso !== null) {
-        const cur = m.menusDelDia[enCurso];
-        html += `<div class="helper-hint">Estás armando el plato con <b>${escapeHtml((cur && cur.nombre) || '?')}</b>. Ahora elige un agregado abajo. <a href="#" onclick="event.preventDefault(); cancelPlato();" style="color:var(--accent);">Cancelar</a></div>`;
-      }
+      html += '<div class="section-title"><span class="step-num">1</span> Elige tu plato principal</div>';
       html += '<ul class="options">';
       for (let i = 0; i < m.menusDelDia.length; i++) {
         const opt = m.menusDelDia[i];
@@ -268,7 +276,7 @@ function renderMenu(m) {
         if (opt.agotado) {
           html += `<li class="agotado"><span class="name">${escapeHtml(opt.nombre)}</span><span class="badge-out">Agotado</span></li>`;
         } else if (enCurso === i) {
-          html += `<li class="pending-agregado"><span class="name">${escapeHtml(opt.nombre)}</span><span class="badge-pending">Elige agregado ↓</span></li>`;
+          html += `<li class="pending-agregado"><span class="name">${escapeHtml(opt.nombre)}</span><span class="badge-pending">Elegido ✓</span></li>`;
         } else {
           const disabled = enCurso !== null;
           const chip = used > 0 ? `<span class="count-chip">×${used}</span>` : '';
@@ -279,11 +287,19 @@ function renderMenu(m) {
     }
 
     if (hasAgregados) {
-      html += '<div class="section-title">Agregado</div>';
-      if (enCurso === null && !cart.platos.length) {
+      html += '<div id="agregado-section" class="section-title"><span class="step-num">2</span> Ahora elige un agregado</div>';
+      if (enCurso !== null) {
+        const cur = m.menusDelDia[enCurso];
+        html += `<div class="step-alert">
+          <div class="step-alert-title">Falta 1 paso</div>
+          <div class="step-alert-body">Elegiste <b>${escapeHtml((cur && cur.nombre) || '?')}</b>. Ahora toca un <b>agregado</b> abajo para completar tu plato.</div>
+          <a href="#" onclick="event.preventDefault(); cancelPlato();" class="step-alert-cancel">Cancelar este plato</a>
+        </div>`;
+      } else if (!cart.platos.length) {
         html += '<div class="helper-hint">Primero elige un <b>principal</b> arriba.</div>';
       }
-      html += '<ul class="options">';
+      const highlight = enCurso !== null ? ' highlight' : '';
+      html += `<ul class="options${highlight}">`;
       for (let i = 0; i < m.agregados.length; i++) {
         const a = m.agregados[i];
         const used = agregadoUsedCount(i);
