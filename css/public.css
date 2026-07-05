@@ -101,6 +101,7 @@ header { text-align: center; margin-bottom: 28px; }
   letter-spacing: 2px;
 }
 .date { margin-top: 10px; font-size: 15px; color: var(--muted); }
+#content { min-height: 1800px; }
 .card {
   background: var(--card);
   border-radius: 20px;
