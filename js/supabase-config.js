@@ -82,14 +82,19 @@ async function saveMenu(menu) {
 }
 
 function subscribeToMenu(callback) {
-  return db
+  const channel = db
     .channel('menu-realtime')
     .on(
       'postgres_changes',
       { event: 'UPDATE', schema: 'public', table: 'menu_config', filter: 'id=eq.1' },
       (payload) => callback(dbToMenu(payload.new))
-    )
-    .subscribe();
+    );
+  channel.subscribe((status) => {
+    if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+      db.removeChannel(channel);
+    }
+  });
+  return channel;
 }
 
 async function signInAdmin(password) {
