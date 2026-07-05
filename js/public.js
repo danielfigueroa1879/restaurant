@@ -403,20 +403,41 @@ function renderMenu(m) {
 }
 
 // ---------- data layer (Supabase) ----------
+const MENU_CACHE_KEY = 'menuCacheV1';
+
+function loadMenuFromCache() {
+  try {
+    const raw = localStorage.getItem(MENU_CACHE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (_) { return null; }
+}
+
+function saveMenuToCache(m) {
+  try { localStorage.setItem(MENU_CACHE_KEY, JSON.stringify(m)); } catch (_) {}
+}
+
 async function loadMenu() {
   const content = document.getElementById('content');
   if (!currentMenu) content.innerHTML = '<div class="card"><div class="empty">Cargando...</div></div>';
   try {
     currentMenu = await fetchMenu();
+    saveMenuToCache(currentMenu);
     renderMenu(currentMenu);
     renderCart();
   } catch (err) {
     console.error(err);
-    content.innerHTML = `<div class="card"><div class="empty">No se pudo cargar el menú.<br/><small>${escapeHtml(err.message || err)}</small></div></div>`;
+    if (!currentMenu) content.innerHTML = `<div class="card"><div class="empty">No se pudo cargar el menú.<br/><small>${escapeHtml(err.message || err)}</small></div></div>`;
   }
 }
 
 // ---------- bootstrap ----------
+const cachedMenu = loadMenuFromCache();
+if (cachedMenu) {
+  currentMenu = cachedMenu;
+  renderMenu(currentMenu);
+  renderCart();
+}
 loadMenu();
 setInterval(loadMenu, 3 * 60 * 1000);
 document.addEventListener('visibilitychange', () => {
