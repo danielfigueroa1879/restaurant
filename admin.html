@@ -5,9 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Administración del menú</title>
   <link rel="stylesheet" href="css/admin.css" />
+  <link rel="manifest" href="admin.webmanifest" />
+  <meta name="theme-color" content="#b8360a" />
+  <link rel="icon" type="image/x-icon" href="favicon/favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Admin Menú" />
 </head>
 <body>
-  <main class="wrap">
+  <div class="wrap">
     <header>
       <h1>Panel del menú</h1>
       <div class="subtitle">Uso exclusivo de la dueña</div>
@@ -139,10 +149,102 @@
         <a class="link" href="index.html">Ver la página pública →</a>
       </div>
     </div>
-  </main>
+  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.0"></script>
+  <div class="install-banner" id="installBanner">
+    <button class="install-banner-close" onclick="dismissBanner()" aria-label="Cerrar">&times;</button>
+    <div class="install-banner-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M4 21h16"/>
+      </svg>
+    </div>
+    <div class="install-banner-content">
+      <div class="install-banner-title" id="installTitle">Instala el Panel</div>
+      <div class="install-banner-body" id="installBody">Añádelo a tu pantalla de inicio para un acceso más rápido.</div>
+    </div>
+    <button class="install-banner-action" id="installAction" onclick="installApp()">Instalar</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
   <script src="js/admin.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+
+    let deferredInstallPrompt = null;
+    let hideBannerTimer = null;
+    const banner = document.getElementById('installBanner');
+    const installTitle = document.getElementById('installTitle');
+    const installBody = document.getElementById('installBody');
+    const installAction = document.getElementById('installAction');
+
+    const isStandalone = () =>
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true;
+
+    const isIos = () => {
+      const ua = window.navigator.userAgent;
+      const iOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+      const iPadOS = ua.includes('Mac') && 'ontouchend' in document;
+      return iOS || iPadOS;
+    };
+
+    function showBanner(seconds = 7) {
+      if (isStandalone()) return;
+      banner.classList.add('visible');
+      clearTimeout(hideBannerTimer);
+      hideBannerTimer = setTimeout(hideBanner, seconds * 1000);
+    }
+
+    function hideBanner() {
+      banner.classList.remove('visible');
+      clearTimeout(hideBannerTimer);
+    }
+
+    window.dismissBanner = function () {
+      hideBanner();
+      try { localStorage.setItem('adminInstallDismissed', Date.now()); } catch (_) {}
+    };
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      installTitle.textContent = 'Instala el Panel';
+      installBody.textContent = 'Tenlo siempre a mano en tu pantalla de inicio.';
+      installAction.style.display = '';
+      installAction.textContent = 'Instalar';
+      showBanner(8);
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      hideBanner();
+    });
+
+    window.installApp = async function () {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const { outcome } = await deferredInstallPrompt.userChoice;
+        if (outcome === 'accepted') hideBanner();
+        deferredInstallPrompt = null;
+      }
+    };
+
+    window.addEventListener('load', () => {
+      if (isStandalone()) return;
+      const last = Number(localStorage.getItem('adminInstallDismissed') || 0);
+      if (Date.now() - last < 1000 * 60 * 60 * 24 * 3) return;
+      if (isIos()) {
+        installTitle.textContent = 'Instala en tu iPhone';
+        installBody.innerHTML = 'Toca <b>Compartir</b> y luego <b>“Añadir a pantalla de inicio”</b>.';
+        installAction.style.display = 'none';
+        setTimeout(() => showBanner(8), 1500);
+      }
+    });
+  </script>
 </body>
 </html>
