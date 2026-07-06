@@ -15,6 +15,84 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Admin Menú" />
+  <style>
+    /* ============ Banner de Instalación PWA ============ */
+    .install-banner {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      top: -160px;
+      background: #ffffff;
+      color: #1a1a1a;
+      border: 2px solid #b8360a;
+      border-radius: 14px;
+      padding: 12px 40px 12px 12px;
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.28);
+      z-index: 1000;
+      display: none; /* Se activa como flex por JS para evitar saltos unstyled */
+      align-items: center;
+      gap: 12px;
+      transition: top 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+      max-width: 620px;
+      margin: 0 auto;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .install-banner.visible {
+      top: 12px;
+    }
+    .install-banner-icon {
+      flex: 0 0 40px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #b8360a;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .install-banner-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .install-banner-title {
+      font-weight: 800;
+      color: #b8360a;
+      font-size: 14px;
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+    .install-banner-body {
+      font-size: 13px;
+      line-height: 1.35;
+      color: #333;
+    }
+    .install-banner-action {
+      flex: 0 0 auto;
+      background: #b8360a;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .install-banner-action:active {
+      transform: translateY(1px);
+    }
+    .install-banner-close {
+      position: absolute;
+      top: 4px;
+      right: 8px;
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      line-height: 1;
+      color: #999;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <div class="wrap">
@@ -151,7 +229,7 @@
     </div>
   </div>
 
-  <div class="install-banner" id="installBanner">
+  <div class="install-banner" id="installBanner" style="display: none;">
     <button class="install-banner-close" onclick="dismissBanner()" aria-label="Cerrar">&times;</button>
     <div class="install-banner-icon">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -193,9 +271,13 @@
       return iOS || iPadOS;
     };
 
-    function showBanner(seconds = 7) {
+    function showBanner(seconds = 10) {
       if (isStandalone()) return;
-      banner.classList.add('visible');
+      banner.style.display = 'flex';
+      // Permite aplicar display: flex antes de iniciar la animación de transición
+      setTimeout(() => {
+        banner.classList.add('visible');
+      }, 50);
       clearTimeout(hideBannerTimer);
       hideBannerTimer = setTimeout(hideBanner, seconds * 1000);
     }
@@ -203,6 +285,12 @@
     function hideBanner() {
       banner.classList.remove('visible');
       clearTimeout(hideBannerTimer);
+      // Oculta el display: none después de que finalice la transición CSS (450ms)
+      setTimeout(() => {
+        if (!banner.classList.contains('visible')) {
+          banner.style.display = 'none';
+        }
+      }, 500);
     }
 
     window.dismissBanner = function () {
@@ -217,7 +305,7 @@
       installBody.textContent = 'Tenlo siempre a mano en tu pantalla de inicio.';
       installAction.style.display = '';
       installAction.textContent = 'Instalar';
-      showBanner(8);
+      showBanner(10);
     });
 
     window.addEventListener('appinstalled', () => {
@@ -242,7 +330,7 @@
         installTitle.textContent = 'Instala en tu iPhone';
         installBody.innerHTML = 'Toca <b>Compartir</b> y luego <b>“Añadir a pantalla de inicio”</b>.';
         installAction.style.display = 'none';
-        setTimeout(() => showBanner(8), 1500);
+        setTimeout(() => showBanner(10), 1500);
       }
     });
   </script>
