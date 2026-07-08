@@ -507,6 +507,70 @@ li.pending-agregado .badge-pending {
   font-size: 13px;
   margin: 10px 0;
 }
+.pending-plato {
+  background: #fff8e1;
+  border: 2px solid #f4a30f;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 10px 0 14px;
+  box-shadow: 0 4px 12px rgba(244, 163, 15, 0.18);
+}
+.pending-plato-title {
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #7a4a00;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.pending-plato-title b { color: #4d2d00; font-weight: 900; text-transform: none; letter-spacing: 0; }
+.pending-agregados-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pending-agregados-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffe9b3;
+  color: #4d2d00;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+.pending-agregados-list li .name { flex: 1; min-width: 0; }
+.pending-agregados-list li .btn-x {
+  border: 1px solid #b3760a;
+  color: #7a4a00;
+  background: transparent;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.pending-plato-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.btn-confirm {
+  background: #2e7d32;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.25);
+}
+.btn-confirm:hover { background: #1b5e20; }
 .pedido-frame {
   border: 2px solid #2e7d32;
   background: #f1faf1;
