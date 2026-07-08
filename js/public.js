@@ -29,7 +29,7 @@ function getMesa() {
 
 // ---------- state ----------
 let currentMenu = null;
-let cart = { platos: [], platoEnCurso: null, adicionales: {}, bebidas: {}, postres: {} };
+let cart = { platos: [], platoEnCurso: null, platoEnCursoAgregados: [], adicionales: {}, bebidas: {}, postres: {} };
 
 function scrollToSection(id) {
   const el = document.getElementById(id);
@@ -49,6 +49,7 @@ window.addEventListener('scroll', () => {
 function pickPrincipal(i) {
   if (cart.platoEnCurso !== null) return;
   cart.platoEnCurso = i;
+  cart.platoEnCursoAgregados = [];
   renderAll();
   setTimeout(() => {
     const target = document.getElementById('agregado-section');
@@ -57,15 +58,30 @@ function pickPrincipal(i) {
 }
 function pickAgregado(i) {
   if (cart.platoEnCurso === null) return;
-  cart.platos.push({ p: cart.platoEnCurso, a: i, justAdded: true });
+  cart.platoEnCursoAgregados.push(i);
+  renderAll();
+  setTimeout(() => {
+    const el = document.getElementById('confirmar-plato-btn') ||
+               document.querySelector('.pending-plato');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 60);
+}
+function removePendingAgregado(idx) {
+  cart.platoEnCursoAgregados.splice(idx, 1);
+  renderAll();
+}
+function confirmPlato() {
+  if (cart.platoEnCurso === null || !cart.platoEnCursoAgregados.length) return;
+  cart.platos.push({ p: cart.platoEnCurso, as: cart.platoEnCursoAgregados.slice(), justAdded: true });
   cart.platoEnCurso = null;
+  cart.platoEnCursoAgregados = [];
   renderAll();
   setTimeout(() => {
     const el = document.querySelector('.platos-list li.just-added');
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 60);
 }
-function cancelPlato() { cart.platoEnCurso = null; renderAll(); }
+function cancelPlato() { cart.platoEnCurso = null; cart.platoEnCursoAgregados = []; renderAll(); }
 function removePlato(idx) { cart.platos.splice(idx, 1); renderAll(); }
 function removeExtra(bucket, index) {
   if (cart[bucket] && cart[bucket][index] !== undefined) {
@@ -74,7 +90,15 @@ function removeExtra(bucket, index) {
   }
 }
 function principalUsedCount(i) { return cart.platos.filter(p => p.p === i).length; }
-function agregadoUsedCount(i) { return cart.platos.filter(p => p.a === i).length; }
+function agregadoUsedCount(i) {
+  let count = 0;
+  for (const plato of cart.platos) {
+    const arr = Array.isArray(plato.as) ? plato.as : (plato.a !== undefined ? [plato.a] : []);
+    for (const a of arr) if (a === i) count++;
+  }
+  for (const a of cart.platoEnCursoAgregados) if (a === i) count++;
+  return count;
+}
 
 function changeQty(bucket, index, delta) {
   const cur = cart[bucket][index] || 0;
@@ -143,7 +167,7 @@ function renderAll() {
 function sendWhatsApp() {
   if (!currentMenu) return;
   if (cart.platoEnCurso !== null) {
-    alert('Tienes un plato sin completar. Elige un agregado o cancela ese plato antes de enviar.');
+    alert('Tienes un plato sin completar. Confirma o cancela ese plato antes de enviar.');
     return;
   }
   const phone = (currentMenu.whatsappNumber || '').replace(/\D/g, '');
@@ -159,9 +183,14 @@ function sendWhatsApp() {
     msg += '*Menú del día:*\n';
     cart.platos.forEach((plato, idx) => {
       const p = currentMenu.menusDelDia[plato.p];
-      const a = currentMenu.agregados[plato.a];
-      if (!p || !a) return;
-      msg += `${idx + 1}. ${p.nombre} + ${a.nombre} — $${price.toLocaleString('es-CL')}\n`;
+      if (!p) return;
+      const arr = Array.isArray(plato.as) ? plato.as : (plato.a !== undefined ? [plato.a] : []);
+      const nombres = arr
+        .map(ai => currentMenu.agregados[ai])
+        .filter(Boolean)
+        .map(a => a.nombre);
+      if (!nombres.length) return;
+      msg += `${idx + 1}. ${p.nombre} + ${nombres.join(' + ')} — $${price.toLocaleString('es-CL')}\n`;
     });
     msg += '\n';
   }
@@ -295,13 +324,19 @@ function renderMenu(m) {
       if (cart.platos.length) {
         html += '<ul class="platos-list">';
         cart.platos.forEach((plato, idx) => {
-          const p = m.menusDelDia[plato.p], a = m.agregados[plato.a];
+          const p = m.menusDelDia[plato.p];
+          const arr = Array.isArray(plato.as) ? plato.as : (plato.a !== undefined ? [plato.a] : []);
+          const nombres = arr.map(ai => {
+            const ag = m.agregados[ai];
+            return ag ? ag.nombre : '?';
+          });
+          const agregadoStr = nombres.length ? nombres.join(' + ') : '?';
           const isNew = !!plato.justAdded;
           if (isNew) plato.justAdded = false;
           const cls = isNew ? ' class="just-added"' : '';
           const badge = isNew ? '<span class="new-badge">Nuevo</span>' : '';
           html += `<li${cls}>
-            <span class="plato-desc"><span class="num">${idx + 1}</span>${escapeHtml((p && p.nombre) || '?')} <span style="color:var(--muted)">+</span> ${escapeHtml((a && a.nombre) || '?')}${badge}</span>
+            <span class="plato-desc"><span class="num">${idx + 1}</span>${escapeHtml((p && p.nombre) || '?')} <span style="color:var(--muted)">+</span> ${escapeHtml(agregadoStr)}${badge}</span>
             <span class="pedido-subtotal">${escapeHtml(platoPriceStr)}</span>
             <button class="btn-x" onclick="removePlato(${idx})">Quitar</button>
           </li>`;
@@ -355,14 +390,32 @@ function renderMenu(m) {
     }
 
     if (hasAgregados) {
-      html += '<div id="agregado-section" class="section-title"><span class="step-num">2</span> Ahora elige un agregado</div>';
+      html += '<div id="agregado-section" class="section-title"><span class="step-num">2</span> Ahora elige uno o más agregados</div>';
       if (enCurso !== null) {
         const cur = m.menusDelDia[enCurso];
-        html += `<div class="step-alert">
-          <div class="step-alert-title">Falta 1 paso</div>
-          <div class="step-alert-body">Elegiste <b>${escapeHtml((cur && cur.nombre) || '?')}</b>. Ahora toca un <b>agregado</b> abajo para completar tu plato.</div>
-          <a href="#" onclick="event.preventDefault(); cancelPlato();" class="step-alert-cancel">Cancelar este plato</a>
-        </div>`;
+        const pending = cart.platoEnCursoAgregados;
+        if (!pending.length) {
+          html += `<div class="step-alert">
+            <div class="step-alert-title">Falta 1 paso</div>
+            <div class="step-alert-body">Elegiste <b>${escapeHtml((cur && cur.nombre) || '?')}</b>. Ahora toca uno o más <b>agregados</b> abajo para completar tu plato.</div>
+            <a href="#" onclick="event.preventDefault(); cancelPlato();" class="step-alert-cancel">Cancelar este plato</a>
+          </div>`;
+        } else {
+          html += `<div class="pending-plato">
+            <div class="pending-plato-title">Plato en curso: <b>${escapeHtml((cur && cur.nombre) || '?')}</b></div>
+            <ul class="pending-agregados-list">`;
+          pending.forEach((ai, pi) => {
+            const ag = m.agregados[ai];
+            html += `<li><span class="name">${escapeHtml((ag && ag.nombre) || '?')}</span><button class="btn-x" onclick="removePendingAgregado(${pi})">Quitar</button></li>`;
+          });
+          html += `</ul>
+            <div class="pending-plato-actions">
+              <button id="confirmar-plato-btn" class="btn-confirm" onclick="confirmPlato()">Agregar plato al pedido</button>
+              <a href="#" onclick="event.preventDefault(); cancelPlato();" class="step-alert-cancel">Cancelar plato</a>
+            </div>
+            <div class="helper-hint">Puedes seguir tocando agregados abajo para añadirlos a este plato.</div>
+          </div>`;
+        }
       } else if (!cart.platos.length) {
         html += '<div class="helper-hint">Primero elige un <b>principal</b> arriba.</div>';
       }
@@ -376,7 +429,8 @@ function renderMenu(m) {
         } else {
           const chip = used > 0 ? `<span class="count-chip">×${used}</span>` : '';
           const disabled = enCurso === null;
-          html += `<li><span class="name">${escapeHtml(a.nombre)}</span>${chip}<button class="btn-pick" ${disabled ? 'disabled' : ''} onclick="pickAgregado(${i})">Elegir</button></li>`;
+          const label = enCurso !== null && cart.platoEnCursoAgregados.length ? 'Agregar' : 'Elegir';
+          html += `<li><span class="name">${escapeHtml(a.nombre)}</span>${chip}<button class="btn-pick" ${disabled ? 'disabled' : ''} onclick="pickAgregado(${i})">${label}</button></li>`;
         }
       }
       html += '</ul>';
