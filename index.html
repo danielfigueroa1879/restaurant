@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Menú del día - Don Lucas</title>
   <meta name="description" content="Consulta el menú del día del restaurante Don Lucas y haz tu pedido por WhatsApp." />
-  <link rel="stylesheet" href="css/public.css" />
+  <link rel="stylesheet" href="css/public.css?v=3" />
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Don Lucas" />
@@ -102,12 +102,26 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.0"></script>
-  <script src="js/supabase-config.js"></script>
-  <script src="js/public.js?v=2"></script>
+  <script src="js/supabase-config.js?v=3"></script>
+  <script src="js/public.js?v=3"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
+        navigator.serviceWorker.register('sw.js').then(reg => {
+          try { reg.update(); } catch (_) {}
+          setInterval(() => { try { reg.update(); } catch (_) {} }, 60 * 1000);
+        }).catch(() => {});
+      });
+      let reloadedForSwUpdate = false;
+      navigator.serviceWorker.addEventListener('message', (e) => {
+        if (!e.data || e.data.type !== 'sw-updated') return;
+        let prev = null;
+        try { prev = localStorage.getItem('swVersion'); } catch (_) {}
+        try { localStorage.setItem('swVersion', e.data.version); } catch (_) {}
+        if (prev && prev !== e.data.version && !reloadedForSwUpdate) {
+          reloadedForSwUpdate = true;
+          location.reload();
+        }
       });
     }
 

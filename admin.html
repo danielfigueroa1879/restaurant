@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Administración del menú</title>
-  <link rel="stylesheet" href="css/admin.css" />
+  <link rel="stylesheet" href="css/admin.css?v=3" />
   <link rel="manifest" href="admin.webmanifest" />
   <meta name="theme-color" content="#b8360a" />
   <link rel="icon" type="image/x-icon" href="favicon/favicon.ico" />
@@ -244,12 +244,26 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js"></script>
-  <script src="js/admin.js"></script>
+  <script src="js/supabase-config.js?v=3"></script>
+  <script src="js/admin.js?v=3"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
+        navigator.serviceWorker.register('sw.js').then(reg => {
+          try { reg.update(); } catch (_) {}
+          setInterval(() => { try { reg.update(); } catch (_) {} }, 60 * 1000);
+        }).catch(() => {});
+      });
+      let reloadedForSwUpdate = false;
+      navigator.serviceWorker.addEventListener('message', (e) => {
+        if (!e.data || e.data.type !== 'sw-updated') return;
+        let prev = null;
+        try { prev = localStorage.getItem('swVersion'); } catch (_) {}
+        try { localStorage.setItem('swVersion', e.data.version); } catch (_) {}
+        if (prev && prev !== e.data.version && !reloadedForSwUpdate) {
+          reloadedForSwUpdate = true;
+          location.reload();
+        }
       });
     }
 
