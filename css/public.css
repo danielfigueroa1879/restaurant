@@ -102,22 +102,35 @@ body {
   transition: background-color 0.35s ease;
   pointer-events: none;
 }
-header { text-align: center; margin-bottom: 28px; }
-.topbar { text-align: center; }
+header { text-align: center; margin-bottom: 28px; padding-top: 74px; }
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  text-align: center;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) 16px 10px;
+  background: rgba(var(--veil-color), 0.72);
+  -webkit-backdrop-filter: saturate(1.4) blur(12px);
+  backdrop-filter: saturate(1.4) blur(12px);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
 .brand {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.5px;
   color: var(--accent);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 .subtitle {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1.8px;
 }
-.date { margin-top: 10px; font-size: 15px; color: var(--muted); }
+.date { margin-top: 6px; font-size: 15px; color: var(--muted); }
 #content { min-height: 1800px; }
 .card {
   background: var(--card);
@@ -848,31 +861,22 @@ html { scroll-behavior: smooth; }
 .nav-btn:active { transform: translateY(0); }
 body.theme-oscuro .nav-btn:hover { background: #d1901f; }
 
+/* ============ Ajustes de banner en celular (≤ 768px) ============ */
+@media (max-width: 768px) {
+  .topbar { padding: calc(6px + env(safe-area-inset-top, 0px)) 12px 8px; }
+  .brand { font-size: 19px; }
+  .subtitle { font-size: 10px; letter-spacing: 1.5px; }
+  header { padding-top: 62px; margin-bottom: 18px; }
+}
+
 /* ============ Optimización para móviles pequeños (≤ 400px) ============ */
 @media (max-width: 400px) {
   .wrap { padding: 18px 12px 40px; }
-  .brand { font-size: 27px; }
-  .subtitle { font-size: 12px; letter-spacing: 1.5px; }
+  .brand { font-size: 18px; }
+  .subtitle { font-size: 10px; letter-spacing: 1.4px; }
   .date { font-size: 13px; }
 
-  .topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 40;
-    padding: 10px 12px calc(10px + env(safe-area-inset-top, 0px));
-    padding-top: calc(10px + env(safe-area-inset-top, 0px));
-    padding-bottom: 12px;
-    background: rgba(var(--veil-color), 0.72);
-    -webkit-backdrop-filter: saturate(1.4) blur(12px);
-    backdrop-filter: saturate(1.4) blur(12px);
-    border-bottom: 1px solid var(--line);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-  }
-  .topbar .brand { margin-bottom: 2px; }
-  header { padding-top: 88px; margin-bottom: 20px; }
-  .date { margin-top: 0; }
+  header { padding-top: 58px; }
 
   .card { padding: 16px 14px; border-radius: 16px; margin-bottom: 14px; }
   .banner { font-size: 12px; padding: 8px 12px; margin-bottom: 14px; }
@@ -926,8 +930,8 @@ body.theme-oscuro .nav-btn:hover { background: #d1901f; }
 /* ============ Móviles muy pequeños (≤ 340px, ej. iPhone SE 1) ============ */
 @media (max-width: 340px) {
   .wrap { padding: 14px 10px 30px; }
-  .brand { font-size: 24px; }
-  header { padding-top: 82px; }
+  .brand { font-size: 17px; }
+  header { padding-top: 56px; }
   .card { padding: 14px 12px; }
   .nav-buttons { grid-template-columns: 1fr; }
   .cart-bar { flex-direction: column; align-items: stretch; gap: 8px; }
