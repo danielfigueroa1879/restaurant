@@ -374,6 +374,8 @@ function renderMenu(m) {
   if (hasMenus || hasAgregados || hasAdicionales || hasBebidas || hasPostres) {
     html += '<div class="card nav-card">';
     html += '<div class="banner">Menú</div>';
+    const dateStr = m.date || todayInSpanish();
+    if (dateStr) html += `<div class="menu-date">${escapeHtml(dateStr)}</div>`;
     html += '<div class="nav-hint">Toca un botón para ir directo a la sección que quieres ver.</div>';
     html += '<div class="nav-buttons">';
     if (hasMenus || hasAgregados) {
