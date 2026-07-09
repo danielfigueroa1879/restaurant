@@ -76,7 +76,7 @@ body {
 .wrap {
   max-width: 640px;
   margin: 0 auto;
-  padding: 32px 20px 60px;
+  padding: 10px 20px 60px;
   position: relative;
   z-index: 1;
 }
@@ -102,7 +102,7 @@ body {
   transition: background-color 0.35s ease;
   pointer-events: none;
 }
-header { text-align: center; margin-bottom: 28px; padding-top: 62px; }
+header { text-align: center; margin-bottom: 10px; padding-top: 54px; }
 .topbar {
   position: fixed;
   top: 0;
@@ -134,7 +134,14 @@ body.theme-oscuro .topbar {
   text-transform: uppercase;
   letter-spacing: 1.8px;
 }
-.date { margin-top: 6px; font-size: 15px; color: var(--muted); }
+header .date { display: none; }
+.menu-date {
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+  margin: -6px 0 12px;
+  font-weight: 500;
+}
 #content { min-height: 1800px; }
 .card {
   background: var(--card);
@@ -870,17 +877,18 @@ body.theme-oscuro .nav-btn:hover { background: #d1901f; }
   .topbar { padding: calc(6px + env(safe-area-inset-top, 0px)) 12px 8px; }
   .brand { font-size: 19px; }
   .subtitle { font-size: 10px; letter-spacing: 1.5px; }
-  header { padding-top: 52px; margin-bottom: 18px; }
+  header { padding-top: 46px; margin-bottom: 8px; }
+  .menu-date { font-size: 13px; margin: -4px 0 10px; }
 }
 
 /* ============ Optimización para móviles pequeños (≤ 400px) ============ */
 @media (max-width: 400px) {
-  .wrap { padding: 18px 12px 40px; }
+  .wrap { padding: 6px 12px 40px; }
   .brand { font-size: 18px; }
   .subtitle { font-size: 10px; letter-spacing: 1.4px; }
-  .date { font-size: 13px; }
+  .menu-date { font-size: 12px; }
 
-  header { padding-top: 48px; }
+  header { padding-top: 44px; }
 
   .card { padding: 16px 14px; border-radius: 16px; margin-bottom: 14px; }
   .banner { font-size: 12px; padding: 8px 12px; margin-bottom: 14px; }
@@ -933,9 +941,9 @@ body.theme-oscuro .nav-btn:hover { background: #d1901f; }
 
 /* ============ Móviles muy pequeños (≤ 340px, ej. iPhone SE 1) ============ */
 @media (max-width: 340px) {
-  .wrap { padding: 14px 10px 30px; }
+  .wrap { padding: 4px 10px 30px; }
   .brand { font-size: 17px; }
-  header { padding-top: 46px; }
+  header { padding-top: 42px; }
   .card { padding: 14px 12px; }
   .nav-buttons { grid-template-columns: 1fr; }
   .cart-bar { flex-direction: column; align-items: stretch; gap: 8px; }
