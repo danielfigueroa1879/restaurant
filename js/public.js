@@ -164,7 +164,7 @@ function renderAll() {
   renderCart();
 }
 
-function sendWhatsApp() {
+function sendWhatsApp(paymentMethod) {
   if (!currentMenu) return;
   if (cart.platoEnCurso !== null) {
     alert('Tienes un plato sin completar. Confirma o cancela ese plato antes de enviar.');
@@ -178,6 +178,12 @@ function sendWhatsApp() {
   let msg = 'Hola! Quiero hacer un pedido';
   if (mesa) msg += ' desde la mesa ' + mesa;
   msg += '.\n\n';
+  if (paymentMethod) {
+    const label = paymentMethod === 'Efectivo'
+      ? 'Efectivo (pago al recibir)'
+      : paymentMethod;
+    msg += `*Forma de pago:* ${label}\n\n`;
+  }
 
   if (cart.platos.length) {
     msg += '*Menú del día:*\n';
@@ -224,7 +230,41 @@ function hideTransferModal() {
   const m = document.getElementById('transferModal');
   if (!m) return;
   m.hidden = true;
-  document.body.style.overflow = '';
+  if (!isAnyModalOpen()) document.body.style.overflow = '';
+}
+function showPaymentModal() {
+  const m = document.getElementById('paymentModal');
+  if (!m) return;
+  m.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+function hidePaymentModal() {
+  const m = document.getElementById('paymentModal');
+  if (!m) return;
+  m.hidden = true;
+  if (!isAnyModalOpen()) document.body.style.overflow = '';
+}
+function isAnyModalOpen() {
+  const t = document.getElementById('transferModal');
+  const p = document.getElementById('paymentModal');
+  return (t && !t.hidden) || (p && !p.hidden);
+}
+function askPaymentMethod() {
+  if (!currentMenu) return;
+  if (cart.platoEnCurso !== null) {
+    alert('Tienes un plato sin completar. Confirma o cancela ese plato antes de enviar.');
+    return;
+  }
+  if (cartCount() === 0) return;
+  showPaymentModal();
+}
+function chooseCash() {
+  hidePaymentModal();
+  sendWhatsApp('Efectivo');
+}
+function chooseTransfer() {
+  hidePaymentModal();
+  sendWhatsApp('Transferencia');
 }
 function copyTransferField(btn) {
   const targetId = btn.getAttribute('data-target');
@@ -261,7 +301,10 @@ function copyTransferField(btn) {
   }
 }
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') hideTransferModal();
+  if (e.key === 'Escape') {
+    hideTransferModal();
+    hidePaymentModal();
+  }
 });
 
 function qtyControlHtml(index, bucket = 'adicionales') {

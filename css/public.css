@@ -1071,6 +1071,13 @@ body.theme-oscuro .nav-btn:hover { background: #d1901f; }
   gap: 8px;
 }
 .transfer-modal-wa:hover { background: #1ea855; }
+.transfer-modal-wa.transfer-modal-close-btn {
+  background: var(--accent);
+}
+.transfer-modal-wa.transfer-modal-close-btn:hover {
+  filter: brightness(0.92);
+  background: var(--accent);
+}
 body.theme-oscuro .transfer-modal-card {
   background: #23252b;
   color: #f2ede2;
@@ -1079,3 +1086,59 @@ body.theme-oscuro .transfer-fields li {
   background: #2b2e34;
   border: 1px solid #33363d;
 }
+
+.pay-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+.pay-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, transform 0.05s, background 0.15s;
+}
+.pay-option:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.pay-option:active { transform: translateY(0); }
+.pay-option-icon {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.pay-option-cash .pay-option-icon { background: #2e7d32; }
+.pay-option-transfer .pay-option-icon { background: var(--accent); }
+.pay-option-body { flex: 1; min-width: 0; }
+.pay-option-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.pay-option-sub {
+  margin-top: 3px;
+  font-size: 13px;
+  color: var(--muted);
+}
+body.theme-oscuro .pay-option {
+  background: #2b2e34;
+  border-color: #33363d;
+  color: #f2ede2;
+}
+body.theme-oscuro .pay-option:hover { border-color: var(--accent); }
