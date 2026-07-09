@@ -102,7 +102,7 @@ body {
   transition: background-color 0.35s ease;
   pointer-events: none;
 }
-header { text-align: center; margin-bottom: 28px; padding-top: 74px; }
+header { text-align: center; margin-bottom: 28px; padding-top: 62px; }
 .topbar {
   position: fixed;
   top: 0;
@@ -111,11 +111,15 @@ header { text-align: center; margin-bottom: 28px; padding-top: 74px; }
   z-index: 40;
   text-align: center;
   padding: calc(8px + env(safe-area-inset-top, 0px)) 16px 10px;
-  background: rgba(var(--veil-color), 0.72);
+  background: rgba(255, 255, 255, 0.55);
   -webkit-backdrop-filter: saturate(1.4) blur(12px);
   backdrop-filter: saturate(1.4) blur(12px);
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+body.theme-oscuro .topbar {
+  background: rgba(35, 37, 43, 0.6);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 .brand {
   font-size: 22px;
@@ -866,7 +870,7 @@ body.theme-oscuro .nav-btn:hover { background: #d1901f; }
   .topbar { padding: calc(6px + env(safe-area-inset-top, 0px)) 12px 8px; }
   .brand { font-size: 19px; }
   .subtitle { font-size: 10px; letter-spacing: 1.5px; }
-  header { padding-top: 62px; margin-bottom: 18px; }
+  header { padding-top: 52px; margin-bottom: 18px; }
 }
 
 /* ============ Optimización para móviles pequeños (≤ 400px) ============ */
@@ -876,7 +880,7 @@ body.theme-oscuro .nav-btn:hover { background: #d1901f; }
   .subtitle { font-size: 10px; letter-spacing: 1.4px; }
   .date { font-size: 13px; }
 
-  header { padding-top: 58px; }
+  header { padding-top: 48px; }
 
   .card { padding: 16px 14px; border-radius: 16px; margin-bottom: 14px; }
   .banner { font-size: 12px; padding: 8px 12px; margin-bottom: 14px; }
@@ -931,7 +935,7 @@ body.theme-oscuro .nav-btn:hover { background: #d1901f; }
 @media (max-width: 340px) {
   .wrap { padding: 14px 10px 30px; }
   .brand { font-size: 17px; }
-  header { padding-top: 56px; }
+  header { padding-top: 46px; }
   .card { padding: 14px 12px; }
   .nav-buttons { grid-template-columns: 1fr; }
   .cart-bar { flex-direction: column; align-items: stretch; gap: 8px; }
