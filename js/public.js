@@ -214,6 +214,56 @@ function sendWhatsApp() {
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
+function showTransferModal() {
+  const m = document.getElementById('transferModal');
+  if (!m) return;
+  m.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+function hideTransferModal() {
+  const m = document.getElementById('transferModal');
+  if (!m) return;
+  m.hidden = true;
+  document.body.style.overflow = '';
+}
+function copyTransferField(btn) {
+  const targetId = btn.getAttribute('data-target');
+  const el = document.getElementById(targetId);
+  if (!el) return;
+  const text = el.textContent.trim();
+  const done = () => {
+    const original = btn.textContent;
+    btn.textContent = 'Copiado ✓';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove('copied');
+    }, 1400);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (_) {}
+      document.body.removeChild(ta);
+      done();
+    });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (_) {}
+    document.body.removeChild(ta);
+    done();
+  }
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') hideTransferModal();
+});
+
 function qtyControlHtml(index, bucket = 'adicionales') {
   const q = cart[bucket][index] || 0;
   const fnMap = { adicionales: 'changeAdicional', bebidas: 'changeBebida', postres: 'changePostre' };
