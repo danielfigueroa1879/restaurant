@@ -275,11 +275,15 @@ function renderOrder(o) {
   return `
     <div class="order" data-id="${o.id}">
       <div class="order-head">
-        <span class="order-time">${time}</span>
-        <span class="order-mesa">${mesa}</span>
-        ${pago}
-        <span class="order-total">${total}</span>
-        <button class="btn-del order-del" onclick="removeOrder(${o.id})">Borrar</button>
+        <div class="order-head-left">
+          <span class="order-time">${time}</span>
+          <span class="order-mesa">${mesa}</span>
+          ${pago}
+        </div>
+        <div class="order-head-right">
+          <span class="order-total">${total}</span>
+          <button class="btn-del order-del" onclick="removeOrder(${o.id})">Borrar</button>
+        </div>
       </div>
       <ul class="order-items">${items}</ul>
     </div>
