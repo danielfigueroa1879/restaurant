@@ -114,6 +114,11 @@ async function fetchOrders({ fromISO, toISO } = {}) {
   return data || [];
 }
 
+async function deleteOrder(id) {
+  const { error } = await db.from('orders').delete().eq('id', id);
+  if (error) throw error;
+}
+
 async function signInAdmin(password) {
   const { error } = await db.auth.signInWithPassword({ email: ADMIN_EMAIL, password });
   return error;

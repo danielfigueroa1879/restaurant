@@ -273,16 +273,27 @@ function renderOrder(o) {
   }).join('');
   const total = '$' + Number(o.total || 0).toLocaleString('es-CL');
   return `
-    <div class="order">
+    <div class="order" data-id="${o.id}">
       <div class="order-head">
         <span class="order-time">${time}</span>
         <span class="order-mesa">${mesa}</span>
         ${pago}
         <span class="order-total">${total}</span>
+        <button class="btn-del order-del" onclick="removeOrder(${o.id})">Borrar</button>
       </div>
       <ul class="order-items">${items}</ul>
     </div>
   `;
+}
+
+async function removeOrder(id) {
+  if (!confirm('¿Borrar este pedido? Esta acción no se puede deshacer.')) return;
+  try {
+    await deleteOrder(id);
+    await loadOrders();
+  } catch (err) {
+    alert('No se pudo borrar el pedido. Intenta de nuevo.');
+  }
 }
 
 async function loadOrders() {
