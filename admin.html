@@ -220,6 +220,32 @@
       </div>
 
       <div class="card">
+        <div class="card-head">
+          <h2>Pedidos recibidos</h2>
+          <button type="button" class="btn-add" onclick="loadOrders()">Actualizar</button>
+        </div>
+        <div class="hint">Se registra un pedido cada vez que un cliente aprieta “Enviar por WhatsApp”.</div>
+
+        <div class="field" style="margin-top:12px;">
+          <label>Ver día</label>
+          <input type="date" id="ordersDate" />
+        </div>
+
+        <div class="orders-stats">
+          <div class="stat">
+            <div class="stat-num" id="ordersCount">0</div>
+            <div class="stat-lbl">Pedidos del día</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" id="ordersTotal">$0</div>
+            <div class="stat-lbl">Total vendido</div>
+          </div>
+        </div>
+
+        <div id="ordersList" class="orders-list"></div>
+      </div>
+
+      <div class="card">
         <div id="autoStatus" class="autosave-status">
           <span class="dot"></span>
           <span id="autoStatusText">Autoguardado activado</span>

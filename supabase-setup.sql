@@ -53,3 +53,40 @@ create policy "auth_update" on public.menu_config
 
 -- 4. Activar Realtime (para que la vista pública reciba cambios en vivo)
 alter publication supabase_realtime add table public.menu_config;
+
+-- ============================================================
+-- 5. Tabla de pedidos
+--    Cada vez que un cliente envía un pedido por WhatsApp,
+--    se guarda una fila aquí para llevar la cuenta y ver el historial.
+-- ============================================================
+create table if not exists public.orders (
+  id           bigserial primary key,
+  created_at   timestamptz not null default now(),
+  mesa         text,
+  payment      text,
+  items        jsonb       not null default '[]'::jsonb,
+  total        integer     not null default 0
+);
+
+create index if not exists orders_created_at_idx on public.orders (created_at desc);
+
+alter table public.orders enable row level security;
+
+drop policy if exists "orders_public_insert" on public.orders;
+drop policy if exists "orders_auth_select"   on public.orders;
+drop policy if exists "orders_auth_delete"   on public.orders;
+
+-- Cualquiera puede crear un pedido (el cliente desde la página).
+create policy "orders_public_insert" on public.orders
+  for insert
+  with check ( true );
+
+-- Solo la dueña autenticada puede ver el historial de pedidos.
+create policy "orders_auth_select" on public.orders
+  for select
+  using ( auth.role() = 'authenticated' );
+
+-- Solo la dueña autenticada puede borrar pedidos (por si necesita limpiar).
+create policy "orders_auth_delete" on public.orders
+  for delete
+  using ( auth.role() = 'authenticated' );
