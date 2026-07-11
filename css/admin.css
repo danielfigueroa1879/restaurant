@@ -396,3 +396,7 @@ input[type="date"]:focus {
   color: var(--muted);
   font-size: 13px;
 }
+.order-del {
+  padding: 4px 10px;
+  font-size: 12px;
+}
