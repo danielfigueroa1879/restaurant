@@ -426,3 +426,77 @@ input[type="date"]:focus {
   padding: 4px 10px;
   font-size: 12px;
 }
+
+/* ---------- Celulares chicos (<= 420px) ---------- */
+@media (max-width: 420px) {
+  .wrap { padding: 18px 12px 60px; }
+  .card { padding: 16px; border-radius: 14px; margin-bottom: 14px; }
+  h1 { font-size: 22px; }
+  .card h2 { font-size: 17px; }
+  .subtitle { font-size: 13px; }
+
+  /* Cada ítem del menú / adicional / bebida / postre */
+  .items li {
+    flex-wrap: wrap;
+    padding: 10px;
+    gap: 8px;
+  }
+  .items li .item-text {
+    flex: 1 1 100%;
+    font-size: 14px;
+  }
+  .items li .item-price { font-size: 12px; }
+  .item-actions {
+    flex: 1 1 100%;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+  .btn-toggle, .btn-del {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  /* Fila de entrada de datos (nombre + Agregar) */
+  .row { grid-template-columns: 1fr; }
+  .btn-add { width: 100%; padding: 12px; }
+
+  /* Tarjetas de estadísticas de pedidos */
+  .stat { padding: 10px 8px; }
+  .stat-num { font-size: 20px; }
+  .stat-lbl { font-size: 10px; letter-spacing: 0.5px; }
+
+  /* Header de card con switch */
+  .card-head { flex-wrap: wrap; gap: 8px; }
+
+  /* Grilla de temas: 2 columnas en vez de auto-fit */
+  .themes { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .theme { padding: 8px; }
+  .theme .swatches { height: 36px; }
+  .theme .theme-name { font-size: 13px; }
+  .theme .theme-desc { font-size: 10px; }
+
+  /* Menos alto para pedidos, no comerse la pantalla */
+  .orders-list { max-height: 55vh; }
+  .order { padding: 10px 12px; }
+  .order-head { gap: 8px; }
+  .order-total { font-size: 14px; }
+  .order-items { font-size: 13px; }
+  .order-extras { font-size: 12px; }
+
+  /* Notas del price-note más compacto */
+  .price-note { font-size: 12px; padding: 8px 10px; }
+}
+
+/* ---------- Muy chicos (<= 340px) ---------- */
+@media (max-width: 340px) {
+  .wrap { padding: 14px 10px 60px; }
+  .card { padding: 14px; }
+  h1 { font-size: 20px; }
+  .card h2 { font-size: 16px; }
+  label { font-size: 11px; letter-spacing: 1px; }
+  input[type="text"], input[type="password"], input[type="number"],
+  input[type="date"], textarea { font-size: 14px; padding: 10px; }
+  .stat-num { font-size: 18px; }
+  .order-head-left { gap: 4px 8px; }
+  .order-pay { font-size: 10px; padding: 2px 8px; letter-spacing: 0.3px; }
+}
