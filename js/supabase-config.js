@@ -92,6 +92,28 @@ function subscribeToMenu(callback) {
     .subscribe();
 }
 
+// ---------- Pedidos ----------
+async function createOrder({ mesa, payment, items, total }) {
+  const { error } = await db
+    .from('orders')
+    .insert({
+      mesa: mesa || null,
+      payment: payment || null,
+      items: items || [],
+      total: Number(total) || 0
+    });
+  if (error) throw error;
+}
+
+async function fetchOrders({ fromISO, toISO } = {}) {
+  let q = db.from('orders').select('*').order('created_at', { ascending: false });
+  if (fromISO) q = q.gte('created_at', fromISO);
+  if (toISO)   q = q.lt('created_at', toISO);
+  const { data, error } = await q;
+  if (error) throw error;
+  return data || [];
+}
+
 async function signInAdmin(password) {
   const { error } = await db.auth.signInWithPassword({ email: ADMIN_EMAIL, password });
   return error;

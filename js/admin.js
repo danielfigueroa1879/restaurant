@@ -176,6 +176,7 @@ async function enterEditor() {
     document.getElementById('editor').classList.remove('hidden');
     renderThemes();
     render();
+    loadOrders();
   } catch (err) {
     const msg = document.getElementById('loginMsg');
     msg.className = 'msg err';
@@ -241,8 +242,71 @@ async function doSave() {
   }
 }
 
+// ---------- Pedidos ----------
+function dayRangeISO(dateStr) {
+  const d = dateStr ? new Date(dateStr + 'T00:00:00') : new Date();
+  const from = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0);
+  const to   = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1, 0, 0, 0);
+  return { fromISO: from.toISOString(), toISO: to.toISOString() };
+}
+
+function todayLocalISODate() {
+  const d = new Date();
+  const off = d.getTimezoneOffset();
+  return new Date(d.getTime() - off * 60000).toISOString().slice(0, 10);
+}
+
+function formatOrderTime(iso) {
+  return new Date(iso).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+}
+
+function renderOrder(o) {
+  const time = formatOrderTime(o.created_at);
+  const mesa = o.mesa ? `Mesa ${escapeHtml(o.mesa)}` : 'Sin mesa';
+  const pago = o.payment ? `<span class="order-pay">${escapeHtml(o.payment)}</span>` : '';
+  const items = (o.items || []).map(it => {
+    const cant = it.cantidad && it.cantidad > 1 ? `${it.cantidad} × ` : '';
+    const extras = Array.isArray(it.agregados) && it.agregados.length
+      ? ` <span class="order-extras">+ ${it.agregados.map(escapeHtml).join(' + ')}</span>`
+      : '';
+    return `<li>${cant}${escapeHtml(it.nombre)}${extras}</li>`;
+  }).join('');
+  const total = '$' + Number(o.total || 0).toLocaleString('es-CL');
+  return `
+    <div class="order">
+      <div class="order-head">
+        <span class="order-time">${time}</span>
+        <span class="order-mesa">${mesa}</span>
+        ${pago}
+        <span class="order-total">${total}</span>
+      </div>
+      <ul class="order-items">${items}</ul>
+    </div>
+  `;
+}
+
+async function loadOrders() {
+  const dateInput = document.getElementById('ordersDate');
+  if (!dateInput.value) dateInput.value = todayLocalISODate();
+  const { fromISO, toISO } = dayRangeISO(dateInput.value);
+  const listEl = document.getElementById('ordersList');
+  listEl.innerHTML = '<div class="empty-list">Cargando pedidos…</div>';
+  try {
+    const orders = await fetchOrders({ fromISO, toISO });
+    document.getElementById('ordersCount').textContent = orders.length;
+    const total = orders.reduce((s, o) => s + (Number(o.total) || 0), 0);
+    document.getElementById('ordersTotal').textContent = '$' + total.toLocaleString('es-CL');
+    listEl.innerHTML = orders.length
+      ? orders.map(renderOrder).join('')
+      : '<div class="empty-list">No hay pedidos ese día.</div>';
+  } catch (err) {
+    listEl.innerHTML = '<div class="empty-list">No se pudieron cargar los pedidos.</div>';
+  }
+}
+
 // ---------- listeners ----------
 document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+document.getElementById('ordersDate').addEventListener('change', loadOrders);
 document.getElementById('newMenu').addEventListener('keydown', e => { if (e.key === 'Enter') addMenu(); });
 document.getElementById('newAgregado').addEventListener('keydown', e => { if (e.key === 'Enter') addAgregado(); });
 document.getElementById('newAdicionalPrecio').addEventListener('keydown', e => { if (e.key === 'Enter') addAdicional(); });

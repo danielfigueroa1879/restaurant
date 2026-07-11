@@ -217,7 +217,57 @@ function sendWhatsApp(paymentMethod) {
   appendBucket('Postres', 'postres', currentMenu.postres);
   msg += `*Total: $${cartTotal().toLocaleString('es-CL')}*`;
 
+  saveOrderToDb(paymentMethod, mesa, price).catch(() => {});
+
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function buildOrderItems(price) {
+  const items = [];
+  for (const plato of cart.platos) {
+    const p = currentMenu.menusDelDia[plato.p];
+    if (!p) continue;
+    const arr = Array.isArray(plato.as) ? plato.as : (plato.a !== undefined ? [plato.a] : []);
+    const nombres = arr
+      .map(ai => currentMenu.agregados[ai])
+      .filter(Boolean)
+      .map(a => a.nombre);
+    items.push({
+      tipo: 'menu',
+      nombre: p.nombre,
+      agregados: nombres,
+      cantidad: 1,
+      precio: price
+    });
+  }
+  const bucketItems = (bucket, list) => {
+    for (const [i, q] of Object.entries(cart[bucket])) {
+      const it = list && list[i];
+      if (!it) continue;
+      items.push({
+        tipo: bucket,
+        nombre: it.nombre,
+        cantidad: Number(q),
+        precio: priceNum(it.precio)
+      });
+    }
+  };
+  bucketItems('adicionales', currentMenu.adicionales);
+  bucketItems('bebidas', currentMenu.bebidas);
+  bucketItems('postres', currentMenu.postres);
+  return items;
+}
+
+async function saveOrderToDb(paymentMethod, mesa, price) {
+  if (typeof createOrder !== 'function') return;
+  const items = buildOrderItems(price);
+  if (!items.length) return;
+  await createOrder({
+    mesa: mesa || '',
+    payment: paymentMethod || '',
+    items,
+    total: cartTotal()
+  });
 }
 
 function showTransferModal() {
