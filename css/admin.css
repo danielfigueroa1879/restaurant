@@ -437,23 +437,52 @@ input[type="date"]:focus {
 
   /* Cada ítem del menú / adicional / bebida / postre */
   .items li {
-    flex-wrap: wrap;
-    padding: 10px;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    padding: 10px 12px;
+    gap: 6px 8px;
   }
   .items li .item-text {
-    flex: 1 1 100%;
-    font-size: 14px;
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.25;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .items li .item-price { font-size: 12px; }
+  .items li .item-price {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    font-size: 11px;
+    padding: 1px 7px;
+    font-weight: 700;
+  }
+  .items li .badge-agotado {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: start;
+    font-size: 10px;
+    padding: 2px 7px;
+    letter-spacing: 0.6px;
+  }
   .item-actions {
-    flex: 1 1 100%;
-    justify-content: flex-end;
-    gap: 6px;
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+    gap: 4px;
   }
   .btn-toggle, .btn-del {
-    padding: 6px 10px;
-    font-size: 12px;
+    padding: 4px 8px;
+    font-size: 10.5px;
+    font-weight: 700;
+    border-radius: 6px;
+    line-height: 1.15;
+    letter-spacing: 0.2px;
   }
 
   /* Fila de entrada de datos (nombre + Agregar) */
