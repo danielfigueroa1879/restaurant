@@ -368,13 +368,18 @@ function qtyControlHtml(index, bucket = 'adicionales') {
   </div>`;
 }
 
+function sortAvailableFirst(list) {
+  return list
+    .map((item, i) => ({ item, i }))
+    .sort((a, b) => (a.item.agotado ? 1 : 0) - (b.item.agotado ? 1 : 0));
+}
+
 function renderCartaCard(title, sectionId, list, bucket) {
   if (!Array.isArray(list) || list.length === 0) return '';
   let html = `<div class="card" id="${sectionId}">`;
   html += `<div class="banner">${escapeHtml(title)}</div>`;
   html += '<ul class="adicionales">';
-  for (let i = 0; i < list.length; i++) {
-    const a = list[i];
+  for (const { item: a, i } of sortAvailableFirst(list)) {
     const p = a.precio ? `<span class="p">${escapeHtml(formatPrice(a.precio))}</span>` : '';
     if (a.agotado) {
       html += `<li class="agotado"><span class="name">${escapeHtml(a.nombre)}</span><span class="badge-out">Agotado</span>${p}</li>`;
@@ -518,8 +523,7 @@ function renderMenu(m) {
     if (hasMenus) {
       html += '<div class="section-title"><span class="step-num">1</span> Elige tu plato principal</div>';
       html += '<ul class="options">';
-      for (let i = 0; i < m.menusDelDia.length; i++) {
-        const opt = m.menusDelDia[i];
+      for (const { item: opt, i } of sortAvailableFirst(m.menusDelDia)) {
         const used = principalUsedCount(i);
         if (opt.agotado) {
           html += `<li class="agotado"><span class="name">${escapeHtml(opt.nombre)}</span><span class="badge-out">Agotado</span></li>`;
@@ -566,8 +570,7 @@ function renderMenu(m) {
       }
       const highlight = enCurso !== null ? ' highlight' : '';
       html += `<ul class="options${highlight}">`;
-      for (let i = 0; i < m.agregados.length; i++) {
-        const a = m.agregados[i];
+      for (const { item: a, i } of sortAvailableFirst(m.agregados)) {
         const used = agregadoUsedCount(i);
         if (a.agotado) {
           html += `<li class="agotado"><span class="name">${escapeHtml(a.nombre)}</span><span class="badge-out">Agotado</span></li>`;
